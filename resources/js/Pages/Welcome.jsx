@@ -1,4 +1,5 @@
 import WelcomeLayout from "@/Layouts/WelcomeLayout";
+import Hero from "@/Section/Hero";
 import { Head } from "@inertiajs/react";
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
@@ -16,8 +17,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
     return (
         <WelcomeLayout>
             <Head title="Welcome" />
-            <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 text-gray-700 px-4">
-                <div className="max-w-4xl text-center">
+            <div className="flex min-h-screen flex-col items-center justify-center  text-gray-700 px-4">
+                {/* <div className="max-w-4xl text-center">
                     <h1 className="text-4xl font-bold mb-4 text-[#FF2D20]">
                         Welcome to Your App
                     </h1>
@@ -33,7 +34,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         alt="Preview"
                         className="rounded shadow-lg max-w-full"
                     />
-                </div>
+                </div> */}
+                <Hero />
             </div>
         </WelcomeLayout>
     );
