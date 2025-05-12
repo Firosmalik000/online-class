@@ -1,4 +1,5 @@
 import WelcomeLayout from "@/Layouts/WelcomeLayout";
+import EventSection from "@/Section/EventSection";
 import Hero from "@/Section/Hero";
 import { Head } from "@inertiajs/react";
 
@@ -36,6 +37,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     />
                 </div> */}
                 <Hero />
+                <EventSection />
             </div>
         </WelcomeLayout>
     );
