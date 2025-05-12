@@ -1,5 +1,6 @@
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import NavLink from "@/Components/NavLink";
+import Footer from "@/Section/Footer";
 import { Link } from "@inertiajs/react";
 
 export default function WelcomeLayout({ children }) {
@@ -37,6 +38,9 @@ export default function WelcomeLayout({ children }) {
                 </div>
             </nav>
             <main>{children}</main>
+            <footer>
+                <Footer />
+            </footer>
         </div>
     );
 }
