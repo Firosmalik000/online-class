@@ -13,6 +13,15 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+Route::get('/kursus', function () {
+    return Inertia::render('Kursus', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+});
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
