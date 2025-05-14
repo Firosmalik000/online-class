@@ -34,9 +34,7 @@ const EventSection = () => {
                                 <p>
                                     <strong>Level:</strong> {event.level}
                                 </p>
-                                <p>
-                                    <strong>Kategori:</strong> {event.kategori}
-                                </p>
+
                                 <p>
                                     <strong>Harga:</strong> Rp{" "}
                                     {event.harga.toLocaleString()}

@@ -3,7 +3,7 @@ import { FaChalkboardTeacher, FaInfoCircle } from "react-icons/fa";
 
 const Hero = () => {
     return (
-        <section className="flex flex-col-reverse lg:flex-row justify-between items-center py-20 px-6  mx-auto">
+        <section className="flex flex-col-reverse lg:flex-row justify-between items-center py-20   mx-auto">
             {/* Text Section */}
             <div className="flex-1 text-center lg:text-left">
                 <div className="text-yellow-400 text-3xl lg:text-4xl mb-2">
