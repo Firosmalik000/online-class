@@ -1,4 +1,4 @@
-import { Kategori } from "@/Data";
+import { KategoriKelas } from "@/Data";
 import WelcomeLayout from "@/Layouts/WelcomeLayout";
 import EventSection from "@/Section/EventSection";
 import React from "react";
@@ -14,7 +14,7 @@ const Kursus = () => {
                         Kategori Kursus
                     </h2>
                     <ul className="space-y-3">
-                        {Kategori.map((kategori) => (
+                        {KategoriKelas.map((kategori) => (
                             <li
                                 key={kategori.id}
                                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition"

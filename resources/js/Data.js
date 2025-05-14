@@ -112,7 +112,7 @@ export const Detail = [
     },
 ];
 
-export const Kategori = [
+export const KategoriKelas = [
     {
         id: 1,
         nama: "Budi Santoso",
