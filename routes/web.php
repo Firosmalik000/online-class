@@ -14,12 +14,10 @@ Route::get('/', function () {
     ]);
 });
 Route::get('/kursus', function () {
-    return Inertia::render('Kursus', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return Inertia::render('Kursus');
+});
+Route::get('/detail', function () {
+    return Inertia::render('Detail');
 });
 
 
