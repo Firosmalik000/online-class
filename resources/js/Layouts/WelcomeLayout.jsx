@@ -22,17 +22,25 @@ export default function WelcomeLayout({ children }) {
                                 Dashboard
                             </NavLink>
                             <NavLink
-                            // href={route("kursus")}
-                            // active={route().current("kursus")}
+                                href={"/kursus"}
+                                // active={route().current("kursus")}
                             >
                                 Kursus
                             </NavLink>
-                            <Link
-                                href={route("login")}
-                                className="rounded px-4 py-2 text-sm font-medium text-white bg-[#FF2D20] hover:bg-[#e0261a] transition"
-                            >
-                                Log in
-                            </Link>
+                            <div className="flex gap-x-2">
+                                <Link
+                                    href={route("login")}
+                                    className="rounded px-4 py-2 text-sm font-medium text-white bg-[#FF2D20] hover:bg-[#e0261a] transition"
+                                >
+                                    Log in
+                                </Link>
+                                <Link
+                                    href={route("register")}
+                                    className="rounded px-4 py-2 text-sm font-medium text-white bg-[#FF2D20] hover:bg-[#e0261a] transition"
+                                >
+                                    Register
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
