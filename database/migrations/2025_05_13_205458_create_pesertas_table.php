@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nama',100);
             $table->string('email',100);
             $table->string('password',255);
+            $table->rememberToken();
             $table->string('telepon',15);
             $table->text('alamat');
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');

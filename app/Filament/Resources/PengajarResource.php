@@ -17,13 +17,23 @@ class PengajarResource extends Resource
 {
     protected static ?string $model = Pengajar::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'Pengajar';
+
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+
+    protected static ?string $navigationGroup = 'Users';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('nama')->required(),
+                Forms\Components\TextInput::make('keahlian')->required(),
+                Forms\Components\FileUpload::make('foto')
+                    ->directory('foto-pengajar')
+                    ->visibility('public')
+                    ->columnSpan(2)
+                    ->required(),
             ]);
     }
 
@@ -31,7 +41,9 @@ class PengajarResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\ImageColumn::make('foto')->circular()->visibility('public')->default('https://placehold.co/600x400?text=User+Name'),
+                Tables\Columns\TextColumn::make('nama'),
+                Tables\Columns\TextColumn::make('keahlian'),
             ])
             ->filters([
                 //

@@ -10,6 +10,8 @@ class ListPengajars extends ListRecords
 {
     protected static string $resource = PengajarResource::class;
 
+    protected ?string $heading = 'Pengajar';
+
     protected function getHeaderActions(): array
     {
         return [

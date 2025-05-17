@@ -20,7 +20,9 @@ class PesertaResource extends Resource
 
     protected static ?string $navigationLabel = 'Peserta';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    protected static ?string $navigationGroup = 'Users';
 
     public static function form(Form $form): Form
     {

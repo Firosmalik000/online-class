@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('kelas', function (Blueprint $table) {
             $table->bigInteger('id_kelas',true)->unique();
+            $table->foreignId('id_pengajar')->constrained('pengajars');
             $table->string('nama_kelas',100);
             $table->text('deskripsi');
             $table->dateTime('jadwal');

@@ -20,7 +20,9 @@ class PegawaiResource extends Resource
 
     protected static ?string $navigationLabel = 'Pegawai';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-m-user';
+
+    protected static ?string $navigationGroup = 'Users';
 
     public static function form(Form $form): Form
     {
