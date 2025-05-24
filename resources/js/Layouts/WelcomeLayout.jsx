@@ -16,12 +16,6 @@ export default function WelcomeLayout({ children }) {
                         </div>
                         <div className="flex items-center gap-6">
                             <NavLink
-                                href={route("dashboard")}
-                                active={route().current("dashboard")}
-                            >
-                                Dashboard
-                            </NavLink>
-                            <NavLink
                                 href={"/kursus"}
                                 // active={route().current("kursus")}
                             >
