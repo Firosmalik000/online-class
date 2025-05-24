@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pendaftarans', function (Blueprint $table) {
-            $table->bigInteger('id_pendaftaran',true)->unique();
+            $table->id('id_pendaftaran');
             $table->bigInteger('id_peserta');
             $table->bigInteger('id_kelas');
             $table->enum('status', ['aktif', 'dibatalkan','selesai'])->default('aktif');

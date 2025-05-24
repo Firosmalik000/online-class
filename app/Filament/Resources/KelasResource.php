@@ -31,7 +31,7 @@ class KelasResource extends Resource
                     ->options(options: Pengajar::all()->pluck('nama', 'id_pengajar')->toArray())
                     ->searchable()
                     ->required(),
-                Forms\Components\TextArea::make('deskripsi')->required(),
+                Forms\Components\RichEditor::make('deskripsi')->columnSpan(2)->required(),
                 Forms\Components\DateTimePicker::make('jadwal')->required(),
                 Forms\Components\TextInput::make('harga')
                     ->label('Harga')
