@@ -1,6 +1,7 @@
 import React from "react";
 import WelcomeLayout from "@/Layouts/WelcomeLayout";
 import { FaUser } from "react-icons/fa";
+import { Link } from "@inertiajs/react";
 
 const Detail = ({ kelas }) => {
     const data = kelas;
@@ -99,9 +100,14 @@ const Detail = ({ kelas }) => {
                             </div>
 
                             {/* Tombol Daftar */}
-                            <button className="mt-6 w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
-                                Daftar
-                            </button>
+                            <a
+                                // href={route("order", data.id)}
+                                href={"/order"}
+                            >
+                                <button className="mt-6 w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
+                                    Daftar
+                                </button>
+                            </a>
                         </div>
                     </div>
                 </div>
