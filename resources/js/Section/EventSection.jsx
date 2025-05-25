@@ -1,11 +1,30 @@
 import { Link } from "@inertiajs/react";
 import React from "react";
 
-const EventSection = ({ kelas, filter }) => {
+const EventSection = ({ kelas, filter, search }) => {
     const filteredKelas = kelas?.filter((event) => {
-        const kategoriList = event?.kategori.split(",");
-        return filter !== "semua" ? kategoriList?.includes(filter) : kelas;
+        const kategoriList = event?.kategori?.split(",") ?? [];
+
+        const isKategoriMatch =
+            filter === "semua" || kategoriList.includes(filter);
+
+        const isSearchMatch =
+            !search ||
+            event.nama_kelas.toLowerCase().includes(search.toLowerCase());
+
+        return isKategoriMatch && isSearchMatch;
     });
+
+    const formatDate = (date) => {
+        const options = { day: "numeric", month: "long", year: "numeric" };
+        return new Date(date).toLocaleDateString("id-ID", options);
+    };
+    const formatHarga = (harga) => {
+        return harga.toLocaleString("id-ID", {
+            style: "currency",
+            currency: "IDR",
+        });
+    };
     return (
         <section className="py-10 px-5 bg-gradient-to-b from-white to-gray-100">
             <h2 className="text-3xl font-bold text-center mb-10 text-blue-900">
@@ -23,30 +42,36 @@ const EventSection = ({ kelas, filter }) => {
                             className="w-full h-52 object-cover"
                         />
                         <div className="p-6">
-                            <h3 className="text-2xl font-semibold text-blue-800">
-                                {event.nama_kelas}
-                            </h3>
-                            <p className="text-gray-600 mt-1 mb-3">
-                                {event.deskripsi}
-                            </p>
-                            <div className="text-sm text-gray-700 space-y-1">
-                                <p>
-                                    <strong>Jadwal:</strong>{" "}
-                                    {new Date(event.jadwal).toLocaleString()}
+                            <div className="h-[100px]">
+                                {" "}
+                                <h3 className="text-2xl font-semibold text-blue-800">
+                                    {event.nama_kelas}
+                                </h3>
+                                <p className="text-gray-600 mt-1 mb-3">
+                                    {event.deskripsi}
                                 </p>
-                                <p>
-                                    <strong>Level:</strong> {event.level}
-                                </p>
+                            </div>
 
-                                <p>
+                            <div className="text-sm text-gray-700 space-y-1">
+                                <div className="flex justify-between">
+                                    <strong>Jadwal:</strong>{" "}
+                                    {formatDate(event.jadwal)}
+                                </div>
+                                <div className="flex justify-between">
+                                    <strong>Level:</strong> {event.level}
+                                </div>
+                                <div className="flex justify-between">
                                     <strong>Harga:</strong> Rp{" "}
-                                    {event.harga.toLocaleString()}
-                                </p>
-                                <p>
+                                    {formatHarga(event.harga)}
+                                </div>
+                                <div className="flex justify-between">
                                     <strong>Pengajar:</strong>{" "}
-                                    {event.pengajar.nama} (
-                                    {event.pengajar.keahlian})
-                                </p>
+                                    {event.pengajar.nama}
+                                </div>
+                                <div className="flex justify-between">
+                                    <strong>keahlian:</strong>
+                                    {event.pengajar.keahlian}
+                                </div>
                             </div>
 
                             <a
