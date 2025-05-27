@@ -12,12 +12,15 @@ export default function Register() {
         email: "",
         password: "",
         password_confirmation: "",
+        telpon: "",
+        alamat: "",
     });
 
     const submit = (e) => {
         e.preventDefault();
         post(route("register"), {
             onFinish: () => reset("password", "password_confirmation"),
+            onError: (errors) => Object.keys(errors).length > 0 && alert(Object.values(errors)[0]),
         });
     };
 
@@ -66,22 +69,22 @@ export default function Register() {
                         </div>
                         {/* Telpon */}
                         <div className="mb-4">
-                            <InputLabel htmlFor="telpon" value="Telpon" />
+                            <InputLabel htmlFor="telepon" value="Telpon" />
                             <TextInput
-                                type="number"
-                                id="telpon"
-                                name="telpon"
-                                value={data.telpon}
+                                type="tel"
+                                id="telepon"
+                                name="telepon"
+                                value={data.telepon}
                                 className="mt-1 block w-full"
-                                autoComplete="telpon"
+                                autoComplete="telepon"
                                 isFocused={true}
                                 onChange={(e) =>
-                                    setData("telpon", e.target.value)
+                                    setData("telepon", e.target.value)
                                 }
                                 required
                             />
                             <InputError
-                                message={errors.telpon}
+                                message={errors.telepon}
                                 className="mt-2"
                             />
                         </div>
@@ -167,8 +170,9 @@ export default function Register() {
                                 id="alamat"
                                 name="alamat"
                                 value={data.alamat}
-                                className="mt-1 block w-full"
-                                autoComplete="username"
+                                className="mt-1 block w-full rounded-md"
+                                autoComplete="address"
+                                rows={3}
                                 onChange={(e) =>
                                     setData("alamat", e.target.value)
                                 }

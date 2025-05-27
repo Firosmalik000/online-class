@@ -7,7 +7,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Models\Pengajar;
 use App\Models\Peserta;
 use App\Models\Pendaftaran;
-use App\Models\Pegawai;
+use App\Models\Pengguna;
 
 class StatsOverview extends BaseWidget
 {
@@ -15,8 +15,8 @@ class StatsOverview extends BaseWidget
     {
         return [
             Stat::make('Pengajar', Pengajar::all()->count())->color('primary'),
-            Stat::make('Peserta', Peserta::all()->count())->color('warning'),
-            Stat::make('Pegawai', Pegawai::all()->count())->color('danger'),
+            Stat::make('Peserta', Pengguna::where('role', 'peserta')->count())->color('warning'),
+            Stat::make('Pegawai', Pengguna::where('role', 'pegawai')->count())->color('danger'),
             Stat::make('Pendaftaran', Pendaftaran::all()->count())->color('success'),
         ];
     }

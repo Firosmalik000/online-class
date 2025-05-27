@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pengajar extends Model
 {
-    protected $table = 'pengajars';
+    protected $table = 'pengajar';
 
     protected $primaryKey = 'id_pengajar';
 

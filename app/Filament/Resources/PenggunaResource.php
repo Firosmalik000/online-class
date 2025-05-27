@@ -18,7 +18,7 @@ class PenggunaResource extends Resource
 {
     protected static ?string $model = Pengguna::class;
 
-    protected static ?string $navigationLabel = 'Pegawai';
+    protected static ?string $navigationLabel = 'Pengguna';
 
     protected static ?string $navigationIcon = 'heroicon-m-user';
 
@@ -65,7 +65,8 @@ class PenggunaResource extends Resource
                 ->badge()
                 ->color(fn (string $state): string => match ($state) {
                     'pegawai' => 'warning',
-                    'admin' => 'success'
+                    'admin' => 'success',
+                    'peserta' => 'primary'
                 })
                 ->formatStateUsing(fn (string $state): string => ucfirst($state)),
             ])
