@@ -39,11 +39,7 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
-        ],
-        'pesertas' => [
-            'driver' => 'session',
-            'provider' => 'pesertas',
-        ],
+        ]
     ],
 
     /*
@@ -67,11 +63,7 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
-        ],
-        'pesertas' => [
-            'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\Peserta::class),
-        ],
+        ]
     ],
 
     /*

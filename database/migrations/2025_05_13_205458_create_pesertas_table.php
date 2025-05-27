@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pesertas', function (Blueprint $table) {
-            $table->bigInteger('id_peserta',true)->unique();
+        Schema::create('peserta', function (Blueprint $table) {
+            $table->id('id_peserta');
             $table->string('nama',100);
             $table->string('email',100);
             $table->string('password',255);

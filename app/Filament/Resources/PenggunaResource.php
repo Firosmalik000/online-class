@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\PegawaiResource\Pages;
-use App\Filament\Resources\PegawaiResource\RelationManagers;
-use App\Models\Pegawai;
+use App\Filament\Resources\PenggunaResource\Pages;
+use App\Filament\Resources\PenggunaResource\RelationManagers;
+use App\Models\Pengguna;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,9 +14,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
 
-class PegawaiResource extends Resource
+class PenggunaResource extends Resource
 {
-    protected static ?string $model = Pegawai::class;
+    protected static ?string $model = Pengguna::class;
 
     protected static ?string $navigationLabel = 'Pegawai';
 
@@ -30,7 +30,7 @@ class PegawaiResource extends Resource
             ->schema([
                 Forms\Components\FileUpload::make('foto')
                     ->avatar()
-                    ->directory('foto-pegawai')
+                    ->directory('foto-pengguna')
                     ->visibility('public')
                     ->columnSpan(2),
                 Forms\Components\TextInput::make('nama')->required(),
@@ -43,10 +43,13 @@ class PegawaiResource extends Resource
                     ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                     ->dehydrated(fn (?string $state): bool => filled($state))
                     ->required(fn (string $operation): bool => $operation === 'create'),
+                Forms\Components\TextInput::make('telepon')->tel(),
+                Forms\Components\TextInput::make('alamat'),
                 Forms\Components\Select::make('role')
                     ->options([
                         'pegawai' => 'Pegawai',
                         'admin' => 'Admin',
+                        'peserta' => 'Peserta',
                     ])->default('pegawai'),
             ]);
     }
@@ -89,9 +92,9 @@ class PegawaiResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPegawais::route('/'),
-            'create' => Pages\CreatePegawai::route('/create'),
-            'edit' => Pages\EditPegawai::route('/{record}/edit'),
+            'index' => Pages\ListPenggunas::route('/'),
+            'create' => Pages\CreatePengguna::route('/create'),
+            'edit' => Pages\EditPengguna::route('/{record}/edit'),
         ];
     }
 }

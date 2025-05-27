@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pegawais', function (Blueprint $table) {
-            $table->bigInteger('id_pegawai',true)->unique();
+        Schema::create('pengguna', function (Blueprint $table) {
+            $table->id('id_pengguna');
             $table->string('name',100);
             $table->string('email',100)->unique();
             $table->string('password',255);
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
-            $table->enum('role', ['admin', 'pegawai'])->default('admin');
+            $table->string('telepon',15)->nullable();
+            $table->text('alamat')->nullable();
+            $table->enum('role', ['admin', 'pegawai','peserta'])->default('admin');
             $table->text('foto')->nullable();
             $table->timestamps();
         });
