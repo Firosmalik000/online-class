@@ -1,11 +1,11 @@
 import React from "react";
 import WelcomeLayout from "@/Layouts/WelcomeLayout";
-import { Detail as DetailData } from "@/Data"; // asumsi datamu bernama `Detail`
 import { FaUser } from "react-icons/fa";
+import { Link } from "@inertiajs/react";
 
-const Detail = () => {
-    const data = DetailData[0]; // pakai data pertama dulu
-
+const Detail = ({ kelas }) => {
+    const data = kelas;
+    console.log({ kelas });
     return (
         <WelcomeLayout>
             <section className="min-h-screen px-6 lg:px-24 py-16 text-gray-800">
@@ -18,7 +18,7 @@ const Detail = () => {
 
                         {/* Banner */}
                         <img
-                            src={data.banner}
+                            src={"/storage/" + data.banner}
                             alt={data.nama_kelas}
                             className="w-full h-64 object-cover rounded-xl mb-6"
                         />
@@ -39,7 +39,16 @@ const Detail = () => {
                                 Pengajar
                             </h2>
                             <div className="flex items-center gap-4">
-                                <FaUser className="text-3xl text-gray-600" />
+                                {data.pengajar.foto === null ? (
+                                    <FaUser className="text-3xl text-gray-600" />
+                                ) : (
+                                    <img
+                                        src={"/storage/" + data.pengajar.foto}
+                                        alt={data.pengajar.nama}
+                                        className="w-16 h-16 object-cover rounded-full"
+                                    />
+                                )}
+
                                 <div>
                                     <p className="font-semibold">
                                         {data.pengajar.nama}
@@ -91,9 +100,14 @@ const Detail = () => {
                             </div>
 
                             {/* Tombol Daftar */}
-                            <button className="mt-6 w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
-                                Daftar
-                            </button>
+                            <a
+                                // href={route("order", data.id)}
+                                href={"/order"}
+                            >
+                                <button className="mt-6 w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
+                                    Daftar
+                                </button>
+                            </a>
                         </div>
                     </div>
                 </div>
