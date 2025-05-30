@@ -102,7 +102,7 @@ const Detail = ({ kelas }) => {
                             {/* Tombol Daftar */}
                             <a
                                 // href={route("order", data.id)}
-                                href={"/order"}
+                                href={`/order/${data.id_kelas}`}
                             >
                                 <button className="mt-6 w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
                                     Daftar
