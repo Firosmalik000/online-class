@@ -3,31 +3,108 @@
 namespace App\Http\Controllers;
 use App\Models\Pendaftaran;
 use App\Models\Kelas;
+use App\Models\Pembayaran;
 use Illuminate\Http\Request;
+use Livewire\Features\SupportEvents\Event;
 use Inertia\Inertia;
+use DB;
 
 class PendaftaranController extends Controller
 {
-    public function index(Request $request, $id_kelas)
-    {
-        $kelas = Kelas::with('pengajar')->where('id_kelas', $id_kelas)->first();
-        return Inertia::render('Order', [
-            'kelas' => $kelas,
+    public function index(){
+        $pembayaran = Pembayaran::with('pendaftaran.kelas')->where('pendaftaran.id_peserta', auth()->id())->get();
+        return Inertia::render('Pembayaran', [
+            'pembayaran' => $pembayaran,
         ]);
     }
-    public function store(Request $request, $id_kelas)
+    public function detail(Request $request, $id_pendaftaran)
     {
+        $pembayaran = Pembayaran::with('pendaftaran.kelas')->where('id_pendaftaran', $id_pendaftaran)->first();
+        // dd($pembayaran);
+        return Inertia::render('DetailPembayaran', [
+            'pembayaran' => $pembayaran,
+        ]);
+    }
+
+    public function update(Request $request){
+        DB::beginTransaction();
+        try{
+            $pembayaran = Pembayaran::find($request->id);
+            if($pembayaran){
+                $pembayaran->status = $request->status;
+                $pembayaran->save();
+                DB::commit();
+                return Inertia::render('Pembayaran', [
+                    'pembayaran' => Pembayaran::with('pendaftaran.kelas')->where('pendaftaran.id_peserta', auth()->id())->get(),
+                    'message' => 'Pembayaran Berhasil'
+                ]);
+            }else{
+                DB::rollBack();
+            }
+        }catch (\Exception $e){
+
+        }
+    }
+
+    public function store(Request $request, $id_kelas, Event $event)
+    {
+        DB::beginTransaction();
         try {
+            // dd($request->all());
+            $kelas = Kelas::find($id_kelas);
+
+            $isExist = Pendaftaran::where('id_peserta', auth()->id())->first();
+            if($isExist){
+                return Inertia::response(['message' => 'Anda sudah terdaftar di kelas ini'], 400);
+            }
             $pendaftaran = new Pendaftaran();
             $pendaftaran->id_peserta =  auth()->id();
-            ;
             $pendaftaran->id_kelas = $id_kelas;
             $pendaftaran->status = 'aktif';
             $pendaftaran->save();
 
-            return response()->json(['message' => 'Pendaftaran Berhasil', 'success' => true, 'status' => 201], 201);
+            // Set your Merchant Server Key
+            \Midtrans\Config::$serverKey = config('midtrans.server_key');
+            // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+            \Midtrans\Config::$isProduction = config('midtrans.is_production');
+            // Set sanitization on (default)
+            \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
+            // Set 3DS transaction for credit card to true
+            \Midtrans\Config::$is3ds = config('midtrans.is_3ds');
+
+            $params = array(
+                'transaction_details' => array(
+                    'order_id' => rand(),
+                    'gross_amount' => $kelas->harga,
+                )
+            );
+
+            $snapToken = \Midtrans\Snap::getSnapToken($params);
+
+            $kode_terakhir = Pembayaran::latest()->first()->kode ?? null;
+            $new_code = 'PURCHASE-001';
+            if($kode_terakhir){
+                $last_code = substr($kode_terakhir, 9);
+                $new_code = 'PURCHASE-' . str_pad((int)$last_code + 1, 3, '0', STR_PAD_LEFT);
+            }
+            $pembayaran = new Pembayaran();
+            $pembayaran->id_pendaftaran = $pendaftaran->id_pendaftaran;
+            $pembayaran->kode = $new_code;
+            $pembayaran->snap_token = $snapToken;
+            $pembayaran->total_harga = $kelas->harga;
+            $pembayaran->save();
+
+
+            // return response()->json(['message' => 'Pendaftaran Berhasil', 'success' => true, 'status' => 201], 201);
+            DB::commit();
+            return Inertia::render('DetailPembayaran', [
+                'pembayaran' => $pembayaran,
+                'snapToken' => $snapToken,
+                'messsage' => 'Pendaftaran Berhasil'
+            ]);
         } catch (\Throwable $th) {
-            throw $th;
+            DB::rollBack();
+            throw Inertia::response(['message' => 'Pendaftaran Gagal', 'success' => false, 'status' => 500], 500);
         }
     }
 }

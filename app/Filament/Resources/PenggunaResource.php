@@ -33,7 +33,7 @@ class PenggunaResource extends Resource
                     ->directory('foto-pengguna')
                     ->visibility('public')
                     ->columnSpan(2),
-                Forms\Components\TextInput::make('nama')->required(),
+                Forms\Components\TextInput::make('name')->required(),
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required(),

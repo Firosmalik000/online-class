@@ -11,17 +11,16 @@ use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->name('home.index');
 Route::get('/kursus', [KursusKontroller::class, 'index'])->name('kursus.index');
-Route::get('/detail/{id}', [DetailController::class, 'index'])->name('detail.index');
-Route::get('/order');
-    
-
+Route::get('/detail/{id}', [DetailController::class, 'index'])->name('detail.index'); 
 
 Route::middleware('auth')->group(function () {
     // Route::get('/order', function () {
     //     return Inertia::render('Order');
     // });
-    Route::get('/order/{id}', [PendaftaranController::class, 'index'])->name('order.index'); 
-    Route::post('/order/{id}', [PendaftaranController::class, 'store'])->name('order.store');
+    Route::post('/checkout', [PendaftaranController::class, 'update'])->name('pendaftaran.update');
+    Route::get('/order', [PendaftaranController::class, 'index'])->name('order.index'); 
+    Route::post('/order/{id_kelas}', [PendaftaranController::class, 'store'])->name('order.store');
+    Route::get('/order/{id}', [PendaftaranController::class, 'detail'])->name('order.detail');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

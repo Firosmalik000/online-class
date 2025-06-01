@@ -13,4 +13,9 @@ class Pendaftaran extends Model
     ];
 
     protected $primaryKey = 'id_pendaftaran';
+
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'id_kelas');
+    }
 }
