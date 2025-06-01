@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('pembayaran', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('id_pendaftaran');
-            $table->string('kode');
-            $table->enum('status', ['lunas', 'belum'])->default('belum');
-            $table->string('metode',50);
+            $table->string('kode')->nullable();
+            $table->enum('status', ['pending','lunas', 'belum'])->default('belum');
+            $table->string('metode',50)->nullable();
+            $table->string('snap_token')->nullable();
             $table->decimal('total_harga', 10, 2);
             $table->timestamps();
         });
