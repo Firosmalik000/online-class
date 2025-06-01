@@ -42,13 +42,12 @@ const EventSection = ({ kelas, filter, search }) => {
                             className="w-full h-52 object-cover"
                         />
                         <div className="p-6">
-                            <div className="h-[100px]">
-                                {" "}
+                            <div className="h-[130px]">
                                 <h3 className="text-2xl font-semibold text-blue-800">
                                     {event.nama_kelas}
                                 </h3>
                                 <p className="text-gray-600 mt-1 mb-3">
-                                    {event.deskripsi}
+                                    {event.deskripsi.substring(0, 80)} ...
                                 </p>
                             </div>
 
