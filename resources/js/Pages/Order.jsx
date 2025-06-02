@@ -2,7 +2,7 @@ import WelcomeLayout from "@/Layouts/WelcomeLayout";
 import { useForm } from "@inertiajs/react";
 import React from "react";
 
-const Order = ({ kelas }) => {
+const Order = ({ pembayaran }) => {
     const { post } = useForm();
     const handleSubmit = (e, id) => {
         e.preventDefault();

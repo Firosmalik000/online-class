@@ -46,23 +46,27 @@ class PendaftaranController extends Controller
         }
     }
 
-    public function store(Request $request, $id_kelas, Event $event)
+    public function store(Request $request, $id_kelas)
     {
+        // dd($request->all());
         DB::beginTransaction();
         try {
             // dd($request->all());
             $kelas = Kelas::find($id_kelas);
 
-            $isExist = Pendaftaran::where('id_peserta', auth()->id())->first();
+            $isExist = Pendaftaran::where('id_peserta', auth()->id())
+                    ->where('id_kelas', $kelas->id_kelas)
+                    ->first();
+            // dd($isExist);
             if($isExist){
-                return Inertia::response(['message' => 'Anda sudah terdaftar di kelas ini'], 400);
+                return response()->json(['message' => 'Anda sudah terdaftar di kelas ini'], 400);
             }
             $pendaftaran = new Pendaftaran();
             $pendaftaran->id_peserta =  auth()->id();
             $pendaftaran->id_kelas = $id_kelas;
             $pendaftaran->status = 'aktif';
             $pendaftaran->save();
-
+            
             // Set your Merchant Server Key
             \Midtrans\Config::$serverKey = config('midtrans.server_key');
             // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
@@ -71,31 +75,33 @@ class PendaftaranController extends Controller
             \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
             // Set 3DS transaction for credit card to true
             \Midtrans\Config::$is3ds = config('midtrans.is_3ds');
-
+            
             $params = array(
                 'transaction_details' => array(
                     'order_id' => rand(),
                     'gross_amount' => $kelas->harga,
-                )
-            );
+                    )
+                );
+                
+                $snapToken = \Midtrans\Snap::getSnapToken($params);
+                
+                $kode_terakhir = Pembayaran::latest()->first()->kode ?? null;
+                $new_code = 'PURCHASE-001';
+                if($kode_terakhir){
+                    $last_code = substr($kode_terakhir, 9);
+                    $new_code = 'PURCHASE-' . str_pad((int)$last_code + 1, 3, '0', STR_PAD_LEFT);
+                }
+                $pembayaran = new Pembayaran();
+                $pembayaran->id_pendaftaran = $pendaftaran->id_pendaftaran;
+                $pembayaran->kode = $new_code;
+                $pembayaran->snap_token = $snapToken;
+                $pembayaran->status = 'belum';
+                $pembayaran->total_harga = $kelas->harga;
+                $pembayaran->save();
+                // dd($pembayaran);
 
-            $snapToken = \Midtrans\Snap::getSnapToken($params);
 
-            $kode_terakhir = Pembayaran::latest()->first()->kode ?? null;
-            $new_code = 'PURCHASE-001';
-            if($kode_terakhir){
-                $last_code = substr($kode_terakhir, 9);
-                $new_code = 'PURCHASE-' . str_pad((int)$last_code + 1, 3, '0', STR_PAD_LEFT);
-            }
-            $pembayaran = new Pembayaran();
-            $pembayaran->id_pendaftaran = $pendaftaran->id_pendaftaran;
-            $pembayaran->kode = $new_code;
-            $pembayaran->snap_token = $snapToken;
-            $pembayaran->total_harga = $kelas->harga;
-            $pembayaran->save();
-
-
-            // return response()->json(['message' => 'Pendaftaran Berhasil', 'success' => true, 'status' => 201], 201);
+            // return json()->json(['message' => 'Pendaftaran Berhasil', 'success' => true, 'status' => 201], 201);
             DB::commit();
             return Inertia::render('DetailPembayaran', [
                 'pembayaran' => $pembayaran,
@@ -104,7 +110,7 @@ class PendaftaranController extends Controller
             ]);
         } catch (\Throwable $th) {
             DB::rollBack();
-            throw Inertia::response(['message' => 'Pendaftaran Gagal', 'success' => false, 'status' => 500], 500);
+            return response()->json(['message' => 'Pendaftaran Gagal', 'success' => false, 'status' => 500, 'error' => $th->getMessage(), 'line' => $th->getLine(), 'file' => $th->getFile(), 'trace' => $th->getTrace()], 500);
         }
     }
 }
