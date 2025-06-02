@@ -18,4 +18,8 @@ class Pendaftaran extends Model
     {
         return $this->belongsTo(Kelas::class, 'id_kelas');
     }
+    public function peserta()
+    {
+        return $this->belongsTo(Pengguna::class, 'id_peserta', 'id_pengguna');
+    }
 }

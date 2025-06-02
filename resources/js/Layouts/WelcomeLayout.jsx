@@ -30,6 +30,12 @@ export default function WelcomeLayout({ children }) {
                             >
                                 Kursus
                             </NavLink>
+                            <NavLink
+                                href={"/order"}
+                                // active={route().current("kursus")}
+                            >
+                                Order
+                            </NavLink>
                             {user ? (
                                 <div className="hidden sm:ms-6 sm:flex sm:items-center">
                                     <div className="relative ms-3">

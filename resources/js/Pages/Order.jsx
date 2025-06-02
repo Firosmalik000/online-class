@@ -3,6 +3,7 @@ import { useForm } from "@inertiajs/react";
 import React from "react";
 
 const Order = ({ pembayaran }) => {
+    console.log({ pembayaran });
     const { post } = useForm();
     const handleSubmit = (e, id) => {
         e.preventDefault();

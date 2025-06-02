@@ -12,7 +12,13 @@ use DB;
 class PendaftaranController extends Controller
 {
     public function index(){
-        $pembayaran = Pembayaran::with('pendaftaran.kelas')->where('pendaftaran.id_peserta', auth()->id())->get();
+        $pembayaran = Pembayaran::with('pendaftaran.kelas', 'pendaftaran.peserta')
+        ->whereHas('pendaftaran', function ($query) {
+            $query->where('id_peserta', auth()->id());
+        })
+        ->get();
+        // dd($pembayaran);
+    
         return Inertia::render('Pembayaran', [
             'pembayaran' => $pembayaran,
         ]);

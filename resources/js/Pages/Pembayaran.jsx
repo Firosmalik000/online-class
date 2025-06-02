@@ -1,45 +1,93 @@
-import React, { useState } from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { FaEye, FaSearch, FaCheck, FaTimes, FaClock, FaDownload, FaMoneyBillWave, FaCreditCard } from 'react-icons/fa';
-import Swal from 'sweetalert2';
+import React, { useState } from "react";
+import { Head, Link, useForm } from "@inertiajs/react";
+import {
+    FaEye,
+    FaSearch,
+    FaCheck,
+    FaTimes,
+    FaClock,
+    FaDownload,
+    FaMoneyBillWave,
+    FaCreditCard,
+} from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const Pembayaran = ({ pembayaran, event }) => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [statusFilter, setStatusFilter] = useState('all');
-    const [methodFilter, setMethodFilter] = useState('all');
+    const [searchTerm, setSearchTerm] = useState("");
+    const [statusFilter, setStatusFilter] = useState("all");
+    const [methodFilter, setMethodFilter] = useState("all");
 
     // Form untuk update status pembayaran
     const { put, processing } = useForm();
 
     // Filter data berdasarkan pencarian, status, dan metode
-    const filteredData = pembayaran.filter(item => {
+    const filteredData = pembayaran.filter((item) => {
         const matchesSearch =
             item.nama?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.kelas?.nama_kelas?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.nomor_transaksi?.toLowerCase().includes(searchTerm.toLowerCase());
+            item.kelas?.nama_kelas
+                ?.toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+            item.nomor_transaksi
+                ?.toLowerCase()
+                .includes(searchTerm.toLowerCase());
 
-        const matchesStatus = statusFilter === 'all' || item.status_pembayaran === statusFilter;
-        const matchesMethod = methodFilter === 'all' || item.metode_pembayaran === methodFilter;
+        const matchesStatus =
+            statusFilter === "all" || item.status_pembayaran === statusFilter;
+        // const matchesMethod =
+        //     methodFilter === "all" || item.metode_pembayaran === methodFilter;
 
-        return matchesSearch && matchesStatus && matchesMethod;
+        return item;
     });
+    console.log({ filteredData });
 
     // Fungsi untuk mendapatkan badge status pembayaran
     const getPaymentStatusBadge = (status) => {
         const statusConfig = {
-            'pending': { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Menunggu', icon: FaClock },
-            'paid': { bg: 'bg-green-100', text: 'text-green-800', label: 'Lunas', icon: FaCheck },
-            'failed': { bg: 'bg-red-100', text: 'text-red-800', label: 'Gagal', icon: FaTimes },
-            'expired': { bg: 'bg-gray-100', text: 'text-gray-800', label: 'Kadaluarsa', icon: FaTimes },
-            'refunded': { bg: 'bg-purple-100', text: 'text-purple-800', label: 'Dikembalikan', icon: FaMoneyBillWave }
+            pending: {
+                bg: "bg-yellow-100",
+                text: "text-yellow-800",
+                label: "Menunggu",
+                icon: FaClock,
+            },
+            paid: {
+                bg: "bg-green-100",
+                text: "text-green-800",
+                label: "Lunas",
+                icon: FaCheck,
+            },
+            failed: {
+                bg: "bg-red-100",
+                text: "text-red-800",
+                label: "Gagal",
+                icon: FaTimes,
+            },
+            expired: {
+                bg: "bg-gray-100",
+                text: "text-gray-800",
+                label: "Kadaluarsa",
+                icon: FaTimes,
+            },
+            refunded: {
+                bg: "bg-purple-100",
+                text: "text-purple-800",
+                label: "Dikembalikan",
+                icon: FaMoneyBillWave,
+            },
         };
 
-        const config = statusConfig[status] || { bg: 'bg-gray-100', text: 'text-gray-800', label: status, icon: FaClock };
+        const config = statusConfig[status] || {
+            bg: "bg-gray-100",
+            text: "text-gray-800",
+            label: status,
+            icon: FaClock,
+        };
         const IconComponent = config.icon;
 
         return (
-            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
+            <span
+                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}
+            >
                 <IconComponent className="mr-1" size={10} />
                 {config.label}
             </span>
@@ -49,16 +97,38 @@ const Pembayaran = ({ pembayaran, event }) => {
     // Fungsi untuk mendapatkan badge metode pembayaran
     const getPaymentMethodBadge = (method) => {
         const methodConfig = {
-            'transfer': { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Transfer Bank' },
-            'ewallet': { bg: 'bg-purple-100', text: 'text-purple-800', label: 'E-Wallet' },
-            'credit_card': { bg: 'bg-indigo-100', text: 'text-indigo-800', label: 'Kartu Kredit' },
-            'cash': { bg: 'bg-green-100', text: 'text-green-800', label: 'Tunai' }
+            transfer: {
+                bg: "bg-blue-100",
+                text: "text-blue-800",
+                label: "Transfer Bank",
+            },
+            ewallet: {
+                bg: "bg-purple-100",
+                text: "text-purple-800",
+                label: "E-Wallet",
+            },
+            credit_card: {
+                bg: "bg-indigo-100",
+                text: "text-indigo-800",
+                label: "Kartu Kredit",
+            },
+            cash: {
+                bg: "bg-green-100",
+                text: "text-green-800",
+                label: "Tunai",
+            },
         };
 
-        const config = methodConfig[method] || { bg: 'bg-gray-100', text: 'text-gray-800', label: method };
+        const config = methodConfig[method] || {
+            bg: "bg-gray-100",
+            text: "text-gray-800",
+            label: method,
+        };
 
         return (
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
+            <span
+                className={`px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}
+            >
                 {config.label}
             </span>
         );
@@ -66,47 +136,59 @@ const Pembayaran = ({ pembayaran, event }) => {
 
     // Format tanggal
     const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString('id-ID', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+        return new Date(dateString).toLocaleDateString("id-ID", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
         });
     };
 
     // Format mata uang
     const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0
+        return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
         }).format(amount);
     };
 
     // Handle update status pembayaran
     const handleUpdateStatus = (id, newStatus) => {
         Swal.fire({
-            title: 'Konfirmasi',
+            title: "Konfirmasi",
             text: `Apakah Anda yakin ingin mengubah status pembayaran menjadi ${newStatus}?`,
-            icon: 'question',
+            icon: "question",
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, Ubah!',
-            cancelButtonText: 'Batal'
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, Ubah!",
+            cancelButtonText: "Batal",
         }).then((result) => {
             if (result.isConfirmed) {
-                put(route('payment.update-status', id), {
-                    status_pembayaran: newStatus
-                }, {
-                    onSuccess: () => {
-                        Swal.fire('Berhasil!', 'Status pembayaran berhasil diubah.', 'success');
+                put(
+                    route("payment.update-status", id),
+                    {
+                        status_pembayaran: newStatus,
                     },
-                    onError: () => {
-                        Swal.fire('Error!', 'Terjadi kesalahan saat mengubah status.', 'error');
+                    {
+                        onSuccess: () => {
+                            Swal.fire(
+                                "Berhasil!",
+                                "Status pembayaran berhasil diubah.",
+                                "success"
+                            );
+                        },
+                        onError: () => {
+                            Swal.fire(
+                                "Error!",
+                                "Terjadi kesalahan saat mengubah status.",
+                                "error"
+                            );
+                        },
                     }
-                });
+                );
             }
         });
     };
@@ -114,7 +196,7 @@ const Pembayaran = ({ pembayaran, event }) => {
     // Hitung total pembayaran berdasarkan status
     const getTotalByStatus = (status) => {
         return pembayaran
-            .filter(item => item.status_pembayaran === status)
+            .filter((item) => item.status_pembayaran === status)
             .reduce((total, item) => total + (item.jumlah_bayar || 0), 0);
     };
 
@@ -126,8 +208,12 @@ const Pembayaran = ({ pembayaran, event }) => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Header */}
                     <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900">Data Pembayaran</h1>
-                        <p className="mt-2 text-gray-600">Kelola semua transaksi pembayaran kelas</p>
+                        <h1 className="text-3xl font-bold text-gray-900">
+                            Data Pembayaran
+                        </h1>
+                        <p className="mt-2 text-gray-600">
+                            Kelola semua transaksi pembayaran kelas
+                        </p>
                     </div>
 
                     {/* Stats Cards */}
@@ -138,9 +224,13 @@ const Pembayaran = ({ pembayaran, event }) => {
                                     <FaMoneyBillWave className="w-8 h-8 text-green-500" />
                                 </div>
                                 <div className="ml-4">
-                                    <p className="text-sm font-medium text-gray-500">Total Pendapatan</p>
+                                    <p className="text-sm font-medium text-gray-500">
+                                        Total Pendapatan
+                                    </p>
                                     <p className="text-xl font-bold text-gray-900">
-                                        {formatCurrency(getTotalByStatus('paid'))}
+                                        {formatCurrency(
+                                            getTotalByStatus("paid")
+                                        )}
                                     </p>
                                 </div>
                             </div>
@@ -152,9 +242,17 @@ const Pembayaran = ({ pembayaran, event }) => {
                                     <FaClock className="w-8 h-8 text-yellow-500" />
                                 </div>
                                 <div className="ml-4">
-                                    <p className="text-sm font-medium text-gray-500">Menunggu Pembayaran</p>
+                                    <p className="text-sm font-medium text-gray-500">
+                                        Menunggu Pembayaran
+                                    </p>
                                     <p className="text-xl font-bold text-gray-900">
-                                        {pembayaran.filter(item => item.status_pembayaran === 'pending').length}
+                                        {
+                                            pembayaran.filter(
+                                                (item) =>
+                                                    item.status_pembayaran ===
+                                                    "pending"
+                                            ).length
+                                        }
                                     </p>
                                 </div>
                             </div>
@@ -166,9 +264,17 @@ const Pembayaran = ({ pembayaran, event }) => {
                                     <FaCheck className="w-8 h-8 text-green-500" />
                                 </div>
                                 <div className="ml-4">
-                                    <p className="text-sm font-medium text-gray-500">Pembayaran Lunas</p>
+                                    <p className="text-sm font-medium text-gray-500">
+                                        Pembayaran Lunas
+                                    </p>
                                     <p className="text-xl font-bold text-gray-900">
-                                        {pembayaran.filter(item => item.status_pembayaran === 'paid').length}
+                                        {
+                                            pembayaran.filter(
+                                                (item) =>
+                                                    item.status_pembayaran ===
+                                                    "paid"
+                                            ).length
+                                        }
                                     </p>
                                 </div>
                             </div>
@@ -180,9 +286,17 @@ const Pembayaran = ({ pembayaran, event }) => {
                                     <FaTimes className="w-8 h-8 text-red-500" />
                                 </div>
                                 <div className="ml-4">
-                                    <p className="text-sm font-medium text-gray-500">Pembayaran Gagal</p>
+                                    <p className="text-sm font-medium text-gray-500">
+                                        Pembayaran Gagal
+                                    </p>
                                     <p className="text-xl font-bold text-gray-900">
-                                        {pembayaran.filter(item => ['failed', 'expired'].includes(item.status_pembayaran)).length}
+                                        {
+                                            pembayaran.filter((item) =>
+                                                ["failed", "expired"].includes(
+                                                    item.status_pembayaran
+                                                )
+                                            ).length
+                                        }
                                     </p>
                                 </div>
                             </div>
@@ -201,7 +315,9 @@ const Pembayaran = ({ pembayaran, event }) => {
                                             type="text"
                                             placeholder="Cari berdasarkan nama, email, kelas, atau nomor transaksi..."
                                             value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            onChange={(e) =>
+                                                setSearchTerm(e.target.value)
+                                            }
                                             className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         />
                                     </div>
@@ -211,15 +327,25 @@ const Pembayaran = ({ pembayaran, event }) => {
                                 <div className="sm:w-48">
                                     <select
                                         value={statusFilter}
-                                        onChange={(e) => setStatusFilter(e.target.value)}
+                                        onChange={(e) =>
+                                            setStatusFilter(e.target.value)
+                                        }
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     >
-                                        <option value="all">Semua Status</option>
-                                        <option value="pending">Menunggu</option>
+                                        <option value="all">
+                                            Semua Status
+                                        </option>
+                                        <option value="pending">
+                                            Menunggu
+                                        </option>
                                         <option value="paid">Lunas</option>
                                         <option value="failed">Gagal</option>
-                                        <option value="expired">Kadaluarsa</option>
-                                        <option value="refunded">Dikembalikan</option>
+                                        <option value="expired">
+                                            Kadaluarsa
+                                        </option>
+                                        <option value="refunded">
+                                            Dikembalikan
+                                        </option>
                                     </select>
                                 </div>
 
@@ -227,13 +353,23 @@ const Pembayaran = ({ pembayaran, event }) => {
                                 <div className="sm:w-48">
                                     <select
                                         value={methodFilter}
-                                        onChange={(e) => setMethodFilter(e.target.value)}
+                                        onChange={(e) =>
+                                            setMethodFilter(e.target.value)
+                                        }
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     >
-                                        <option value="all">Semua Metode</option>
-                                        <option value="transfer">Transfer Bank</option>
-                                        <option value="ewallet">E-Wallet</option>
-                                        <option value="credit_card">Kartu Kredit</option>
+                                        <option value="all">
+                                            Semua Metode
+                                        </option>
+                                        <option value="transfer">
+                                            Transfer Bank
+                                        </option>
+                                        <option value="ewallet">
+                                            E-Wallet
+                                        </option>
+                                        <option value="credit_card">
+                                            Kartu Kredit
+                                        </option>
                                         <option value="cash">Tunai</option>
                                     </select>
                                 </div>
@@ -276,11 +412,16 @@ const Pembayaran = ({ pembayaran, event }) => {
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {filteredData.length > 0 ? (
                                         filteredData.map((item) => (
-                                            <tr key={item.id} className="hover:bg-gray-50">
+                                            <tr
+                                                key={item.id}
+                                                className="hover:bg-gray-50"
+                                            >
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex flex-col">
                                                         <div className="text-sm font-medium text-gray-900">
-                                                            #{item.nomor_transaksi || item.id}
+                                                            #
+                                                            {item.nomor_transaksi ||
+                                                                item.id}
                                                         </div>
                                                         <div className="text-xs text-gray-500">
                                                             ID: {item.id}
@@ -290,61 +431,132 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex flex-col">
                                                         <div className="text-sm font-medium text-gray-900">
-                                                            {item.nama || item.user?.name || item.pendaftaran?.nama || 'N/A'}
+                                                            {item.pendaftaran
+                                                                .peserta
+                                                                ?.name ||
+                                                                item.user
+                                                                    ?.name ||
+                                                                item
+                                                                    ?.pendaftaran
+                                                                    ?.peserta
+                                                                    ?.nama ||
+                                                                "N/A"}
                                                         </div>
                                                         <div className="text-sm text-gray-500">
-                                                            {item.email || item.user?.email || item.pendaftaran?.email || 'N/A'}
+                                                            {item.pendaftaran
+                                                                .peserta
+                                                                ?.email ||
+                                                                item.user
+                                                                    ?.email ||
+                                                                item.pendaftaran
+                                                                    ?.email ||
+                                                                "N/A"}
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex flex-col">
                                                         <div className="text-sm font-medium text-gray-900">
-                                                            {item.kelas?.nama_kelas || item.pendaftaran?.kelas?.nama_kelas || 'N/A'}
+                                                            {item.kelas
+                                                                ?.nama_kelas ||
+                                                                item.pendaftaran
+                                                                    ?.kelas
+                                                                    ?.nama_kelas ||
+                                                                "N/A"}
                                                         </div>
                                                         <div className="text-sm text-gray-500">
-                                                            {item.kelas?.kategori || item.pendaftaran?.kelas?.kategori || 'N/A'}
+                                                            {item.kelas
+                                                                ?.kategori ||
+                                                                item.pendaftaran
+                                                                    ?.kelas
+                                                                    ?.kategori ||
+                                                                "N/A"}
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
-                                                    {formatCurrency(item.jumlah_bayar || item.total_bayar || 0)}
+                                                    {formatCurrency(
+                                                        item.jumlah_bayar ||
+                                                            item.total_bayar ||
+                                                            0
+                                                    )}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    {getPaymentMethodBadge(item.metode_pembayaran || 'transfer')}
+                                                    {getPaymentMethodBadge(
+                                                        item.metode_pembayaran ||
+                                                            "transfer"
+                                                    )}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    {getPaymentStatusBadge(item.status_pembayaran || 'pending')}
+                                                    {getPaymentStatusBadge(
+                                                        item.status_pembayaran ||
+                                                            "pending"
+                                                    )}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {item.created_at ? formatDate(item.created_at) : 'N/A'}
+                                                    {item.created_at
+                                                        ? formatDate(
+                                                              item.created_at
+                                                          )
+                                                        : "N/A"}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                     <div className="flex items-center space-x-2">
                                                         <Link
-                                                            href={route('payment.detail', item.id)}
+                                                            // href={route(
+                                                            //     "payment.detail",
+                                                            //     item.id
+                                                            // )}
                                                             className="inline-flex items-center px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
                                                         >
-                                                            <FaEye className="mr-1" size={10} />
+                                                            <FaEye
+                                                                className="mr-1"
+                                                                size={10}
+                                                            />
                                                             Detail
                                                         </Link>
 
-                                                        {item.status_pembayaran === 'pending' && (
+                                                        {item.status_pembayaran ===
+                                                            "pending" && (
                                                             <>
                                                                 <button
-                                                                    onClick={() => handleUpdateStatus(item.id, 'paid')}
-                                                                    disabled={processing}
+                                                                    onClick={() =>
+                                                                        handleUpdateStatus(
+                                                                            item.id,
+                                                                            "paid"
+                                                                        )
+                                                                    }
+                                                                    disabled={
+                                                                        processing
+                                                                    }
                                                                     className="inline-flex items-center px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200"
                                                                 >
-                                                                    <FaCheck className="mr-1" size={10} />
+                                                                    <FaCheck
+                                                                        className="mr-1"
+                                                                        size={
+                                                                            10
+                                                                        }
+                                                                    />
                                                                     Konfirmasi
                                                                 </button>
                                                                 <button
-                                                                    onClick={() => handleUpdateStatus(item.id, 'failed')}
-                                                                    disabled={processing}
+                                                                    onClick={() =>
+                                                                        handleUpdateStatus(
+                                                                            item.id,
+                                                                            "failed"
+                                                                        )
+                                                                    }
+                                                                    disabled={
+                                                                        processing
+                                                                    }
                                                                     className="inline-flex items-center px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
                                                                 >
-                                                                    <FaTimes className="mr-1" size={10} />
+                                                                    <FaTimes
+                                                                        className="mr-1"
+                                                                        size={
+                                                                            10
+                                                                        }
+                                                                    />
                                                                     Tolak
                                                                 </button>
                                                             </>
@@ -357,7 +569,10 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                                 rel="noopener noreferrer"
                                                                 className="inline-flex items-center px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded text-purple-700 bg-purple-100 hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200"
                                                             >
-                                                                <FaDownload className="mr-1" size={10} />
+                                                                <FaDownload
+                                                                    className="mr-1"
+                                                                    size={10}
+                                                                />
                                                                 Bukti
                                                             </a>
                                                         )}
@@ -367,17 +582,25 @@ const Pembayaran = ({ pembayaran, event }) => {
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan="8" className="px-6 py-12 text-center">
+                                            <td
+                                                colSpan="8"
+                                                className="px-6 py-12 text-center"
+                                            >
                                                 <div className="flex flex-col items-center">
                                                     <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                                                         <FaCreditCard className="text-gray-400" />
                                                     </div>
-                                                    <p className="text-gray-500 text-lg font-medium">Tidak ada data pembayaran</p>
+                                                    <p className="text-gray-500 text-lg font-medium">
+                                                        Tidak ada data
+                                                        pembayaran
+                                                    </p>
                                                     <p className="text-gray-400 text-sm mt-1">
-                                                        {searchTerm || statusFilter !== 'all' || methodFilter !== 'all'
-                                                            ? 'Coba ubah filter pencarian Anda'
-                                                            : 'Belum ada transaksi pembayaran yang masuk'
-                                                        }
+                                                        {searchTerm ||
+                                                        statusFilter !==
+                                                            "all" ||
+                                                        methodFilter !== "all"
+                                                            ? "Coba ubah filter pencarian Anda"
+                                                            : "Belum ada transaksi pembayaran yang masuk"}
                                                     </p>
                                                 </div>
                                             </td>
@@ -392,11 +615,26 @@ const Pembayaran = ({ pembayaran, event }) => {
                             <div className="bg-white px-6 py-3 border-t border-gray-200">
                                 <div className="flex items-center justify-between">
                                     <div className="text-sm text-gray-700">
-                                        Menampilkan <span className="font-medium">{filteredData.length}</span> dari{' '}
-                                        <span className="font-medium">{pembayaran.length}</span> transaksi
+                                        Menampilkan{" "}
+                                        <span className="font-medium">
+                                            {filteredData.length}
+                                        </span>{" "}
+                                        dari{" "}
+                                        <span className="font-medium">
+                                            {pembayaran.length}
+                                        </span>{" "}
+                                        transaksi
                                     </div>
                                     <div className="text-sm text-gray-700 font-medium">
-                                        Total: {formatCurrency(filteredData.reduce((total, item) => total + (item.jumlah_bayar || 0), 0))}
+                                        Total:{" "}
+                                        {formatCurrency(
+                                            filteredData.reduce(
+                                                (total, item) =>
+                                                    total +
+                                                    (item.jumlah_bayar || 0),
+                                                0
+                                            )
+                                        )}
                                     </div>
                                 </div>
                             </div>

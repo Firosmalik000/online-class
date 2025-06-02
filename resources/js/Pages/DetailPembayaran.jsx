@@ -3,7 +3,7 @@ import { initSnap, useSnap } from "midtrans-snap";
 import { useForm, usePage } from "@inertiajs/react";
 
 const DetailPembayaran = ({ pembayaran }) => {
-    console.log(pembayaran);
+    console.log({ pembayaran });
     const { env } = usePage().props;
     const { data, processing, post } = useForm({
         id: pembayaran.id,
