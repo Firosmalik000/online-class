@@ -2,11 +2,13 @@ import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
+import { Button } from "@/Components/ui/button";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Textarea } from "@headlessui/react";
 import { Head, Link, useForm } from "@inertiajs/react";
 import Swal from "sweetalert2";
 
+// ...import tetap sama
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
@@ -22,7 +24,7 @@ export default function Register() {
         post(route("register"), {
             onSuccess: () => {
                 Swal.fire("Berhasil!", "Registrasi berhasil.", "success");
-                reset(); // Reset form setelah berhasil
+                reset();
             },
             onFinish: () => reset("password", "password_confirmation"),
             onError: (errors) =>
@@ -34,28 +36,22 @@ export default function Register() {
     return (
         <>
             <Head title="Register" />
-            <div className="min-h-screen flex flex-col md:flex-row bg-white h-screen">
-                {/* Gambar Kiri */}
-                <div className="hidden md:block md:w-1/2">
-                    <img
-                        src="/Image/register.png"
-                        alt="Register Illustration"
-                        className="object-cover w-full h-full"
-                    />
-                </div>
-
-                {/* Form Kanan */}
-                <div className="w-full md:w-1/2 flex items-center justify-center bg-gray-100 py-12 px-6 md:px-16">
+            <div
+                className="min-h-screen flex flex-col md:flex-row bg-cover bg-center"
+                style={{ backgroundImage: "url('/Image/log.jpg')" }}
+            >
+                {/* Card Register */}
+                <div className="w-full md:w-1/2 flex items-center justify-center h-screen bg-white/80 backdrop-blur-sm">
                     <form
                         onSubmit={submit}
-                        className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg"
+                        className="w-full max-w-md bg-white/90 p-10 rounded-2xl shadow-2xl"
                     >
-                        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+                        <h2 className="text-4xl font-extrabold text-indigo-700 mb-8 text-center">
                             Create Account
                         </h2>
 
                         {/* Name */}
-                        <div className="mb-4">
+                        <div className="mb-5">
                             <InputLabel htmlFor="name" value="Name" />
                             <TextInput
                                 id="name"
@@ -74,30 +70,30 @@ export default function Register() {
                                 className="mt-2"
                             />
                         </div>
+
                         {/* Telpon */}
-                        <div className="mb-4">
-                            <InputLabel htmlFor="telepon" value="Telpon" />
+                        <div className="mb-5">
+                            <InputLabel htmlFor="telpon" value="Telpon" />
                             <TextInput
                                 type="tel"
-                                id="telepon"
-                                name="telepon"
-                                value={data.telepon}
+                                id="telpon"
+                                name="telpon"
+                                value={data.telpon}
                                 className="mt-1 block w-full"
-                                autoComplete="telepon"
-                                isFocused={true}
+                                autoComplete="tel"
                                 onChange={(e) =>
-                                    setData("telepon", e.target.value)
+                                    setData("telpon", e.target.value)
                                 }
                                 required
                             />
                             <InputError
-                                message={errors.telepon}
+                                message={errors.telpon}
                                 className="mt-2"
                             />
                         </div>
 
                         {/* Email */}
-                        <div className="mb-4">
+                        <div className="mb-5">
                             <InputLabel htmlFor="email" value="Email" />
                             <TextInput
                                 id="email"
@@ -105,7 +101,7 @@ export default function Register() {
                                 name="email"
                                 value={data.email}
                                 className="mt-1 block w-full"
-                                autoComplete="username"
+                                autoComplete="email"
                                 onChange={(e) =>
                                     setData("email", e.target.value)
                                 }
@@ -117,9 +113,9 @@ export default function Register() {
                             />
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-                            {/* Password */}
-                            <div className="mb-4">
+                        {/* Passwords */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="mb-5">
                                 <InputLabel
                                     htmlFor="password"
                                     value="Password"
@@ -141,9 +137,7 @@ export default function Register() {
                                     className="mt-2"
                                 />
                             </div>
-
-                            {/* Confirm Password */}
-                            <div className="mb-4">
+                            <div className="mb-5">
                                 <InputLabel
                                     htmlFor="password_confirmation"
                                     value="Confirm Password"
@@ -170,8 +164,8 @@ export default function Register() {
                             </div>
                         </div>
 
-                        {/* Email */}
-                        <div className="mb-4">
+                        {/* Alamat */}
+                        <div className="mb-5">
                             <InputLabel htmlFor="alamat" value="Alamat" />
                             <Textarea
                                 id="alamat"
@@ -191,24 +185,28 @@ export default function Register() {
                             />
                         </div>
 
-                        {/* Action Button */}
+                        {/* Action */}
                         <div className="flex items-center justify-between mt-6">
                             <Link
                                 href={route("login")}
-                                className="text-sm text-indigo-600 hover:underline"
+                                className="text-sm text-indigo-600 hover:underline transition duration-150 ease-in-out"
                             >
                                 Already registered?
                             </Link>
 
-                            <PrimaryButton
-                                className="ml-4"
+                            <Button
+                                type="submit"
+                                className="ml-4 transition duration-150 ease-in-out bg-indigo-700"
                                 disabled={processing}
                             >
                                 Register
-                            </PrimaryButton>
+                            </Button>
                         </div>
                     </form>
                 </div>
+
+                {/* Bagian kanan untuk background visual saja */}
+                <div className="hidden md:flex md:w-1/2 h-screen" />
             </div>
         </>
     );
