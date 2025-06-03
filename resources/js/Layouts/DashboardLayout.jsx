@@ -37,7 +37,7 @@ export default function DashboardLayout({ children }) {
                         </div>
                     </div>
                     <nav className="flex flex-col gap-2 mt-4">
-                        <NavLink href="/order">Kursus</NavLink>
+                        <NavLink href={route("order.index")}>Kursus</NavLink>
                         <NavLink href="/profile">Setting</NavLink>
                     </nav>
                 </div>
@@ -89,15 +89,22 @@ export default function DashboardLayout({ children }) {
                             </button>
                         </div>
                         <div className="hidden sm:flex gap-6 items-center">
-                            <NavLink href="/kursus">Kursus</NavLink>
-                            <NavLink href="/order">Order</NavLink>
+                            <NavLink href={route("home.index")}>Home</NavLink>
                         </div>
                         <div className="flex items-center gap-4">
                             {user ? (
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <button className="flex items-center text-sm text-gray-600 hover:text-gray-800">
-                                            {user.name}
+                                            {user.foto ? (
+                                                <img
+                                                    className="w-10 h-10 rounded-full"
+                                                    src={`/storage/${user.foto}`}
+                                                    alt={user.name}
+                                                />
+                                            ) : (
+                                                user.name
+                                            )}
                                             <svg
                                                 className="ml-1 w-4 h-4"
                                                 viewBox="0 0 20 20"
@@ -113,9 +120,9 @@ export default function DashboardLayout({ children }) {
                                     </Dropdown.Trigger>
                                     <Dropdown.Content>
                                         <Dropdown.Link
-                                            href={route("profile.edit")}
+                                            href={route("order.index")}
                                         >
-                                            Profile
+                                            Dashboard
                                         </Dropdown.Link>
                                         <Dropdown.Link
                                             href={route("logout")}
@@ -148,15 +155,10 @@ export default function DashboardLayout({ children }) {
                     {/* Responsive nav */}
                     {showingNavigationDropdown && (
                         <div className="sm:hidden pt-2 pb-3 space-y-1">
-                            <ResponsiveNavLink href="/kursus">
-                                Kursus
+                            <ResponsiveNavLink href={route("order.index")}>
+                                Dashboard
                             </ResponsiveNavLink>
-                            <ResponsiveNavLink href="/order">
-                                Order
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink href={route("profile.edit")}>
-                                Profile
-                            </ResponsiveNavLink>
+
                             <ResponsiveNavLink
                                 method="post"
                                 href={route("logout")}

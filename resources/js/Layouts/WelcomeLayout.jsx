@@ -25,17 +25,12 @@ export default function WelcomeLayout({ children }) {
                         </div>
                         <div className="flex items-center gap-6">
                             <NavLink
-                                href={"/kursus"}
+                                href={route("kursus.index")}
                                 // active={route().current("kursus")}
                             >
                                 Kursus
                             </NavLink>
-                            <NavLink
-                                href={"/order"}
-                                // active={route().current("kursus")}
-                            >
-                                Order
-                            </NavLink>
+
                             {user ? (
                                 <div className="hidden sm:ms-6 sm:flex sm:items-center">
                                     <div className="relative ms-3">
@@ -46,7 +41,20 @@ export default function WelcomeLayout({ children }) {
                                                         type="button"
                                                         className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
                                                     >
-                                                        {user?.name}
+                                                        {/* {user?.name} */}
+                                                        {user.foto ? (
+                                                            <>
+                                                                <img
+                                                                    className="w-10 h-10 rounded-full"
+                                                                    src={`/storage/${user.foto}`}
+                                                                    alt={
+                                                                        user.name
+                                                                    }
+                                                                />
+                                                            </>
+                                                        ) : (
+                                                            user.name
+                                                        )}
 
                                                         <svg
                                                             className="-me-0.5 ms-2 h-4 w-4"
@@ -66,9 +74,9 @@ export default function WelcomeLayout({ children }) {
 
                                             <Dropdown.Content>
                                                 <Dropdown.Link
-                                                    href={route("profile.edit")}
+                                                    href={route("order.index")}
                                                 >
-                                                    Profile
+                                                    Dashboard
                                                 </Dropdown.Link>
                                                 <Dropdown.Link
                                                     href={route("logout")}
@@ -149,7 +157,7 @@ export default function WelcomeLayout({ children }) {
                 >
                     <div className="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink
-                            href={"/kursus"}
+                            href={route("home.index")}
                             // active={route().current("dashboard")}
                         >
                             Dashboard
@@ -167,8 +175,8 @@ export default function WelcomeLayout({ children }) {
                         </div>
 
                         <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route("profile.edit")}>
-                                Profile
+                            <ResponsiveNavLink href={route("order.index")}>
+                                Dashboard
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
