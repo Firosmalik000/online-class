@@ -2,7 +2,7 @@ import { Link } from "@inertiajs/react";
 import React from "react";
 
 const EventSection = ({ kelas, filter, search }) => {
-    const filteredKelas = kelas?.filter((event) => {
+    const filteredKelas = kelas?.data?.filter((event) => {
         const kategoriList = event?.kategori?.split(",") ?? [];
 
         const isKategoriMatch =
@@ -19,12 +19,14 @@ const EventSection = ({ kelas, filter, search }) => {
         const options = { day: "numeric", month: "long", year: "numeric" };
         return new Date(date).toLocaleDateString("id-ID", options);
     };
+
     const formatHarga = (harga) => {
         return harga.toLocaleString("id-ID", {
             style: "currency",
             currency: "IDR",
         });
     };
+
     return (
         <section className="py-10 px-5 bg-gradient-to-b from-white to-gray-100">
             <h2 className="text-3xl font-bold text-center mb-10 text-blue-900">
@@ -60,7 +62,7 @@ const EventSection = ({ kelas, filter, search }) => {
                                     <strong>Level:</strong> {event.level}
                                 </div>
                                 <div className="flex justify-between">
-                                    <strong>Harga:</strong> Rp{" "}
+                                    <strong>Harga:</strong>{" "}
                                     {formatHarga(event.harga)}
                                 </div>
                                 <div className="flex justify-between">
@@ -68,7 +70,7 @@ const EventSection = ({ kelas, filter, search }) => {
                                     {event.pengajar.nama}
                                 </div>
                                 <div className="flex justify-between">
-                                    <strong>keahlian:</strong>
+                                    <strong>Keahlian:</strong>{" "}
                                     {event.pengajar.keahlian}
                                 </div>
                             </div>
@@ -86,6 +88,27 @@ const EventSection = ({ kelas, filter, search }) => {
                             </a>
                         </div>
                     </div>
+                ))}
+            </div>
+
+            {/* Pagination */}
+            <div className="flex justify-center mt-10 gap-2 flex-wrap">
+                {kelas?.links?.map((link, index) => (
+                    <Link
+                        key={index}
+                        href={link.url ?? "#"}
+                        disabled={!link.url}
+                        dangerouslySetInnerHTML={{ __html: link.label }}
+                        className={`px-4 py-2 rounded text-sm
+                            ${
+                                link.active
+                                    ? "bg-blue-600 text-white"
+                                    : link.url
+                                    ? "bg-white text-blue-600 border border-blue-400 hover:bg-blue-100"
+                                    : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                            }
+                        `}
+                    />
                 ))}
             </div>
         </section>

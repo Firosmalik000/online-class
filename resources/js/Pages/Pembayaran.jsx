@@ -11,11 +11,15 @@ import {
     FaCreditCard,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
+import WelcomeLayout from "@/Layouts/WelcomeLayout";
+import { SheetDetail } from "@/Components/SheetDetail";
+import DashboardLayout from "@/Layouts/DashboardLayout";
 
 const Pembayaran = ({ pembayaran, event }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [methodFilter, setMethodFilter] = useState("all");
+    const [detail, setDetail] = useState(false);
 
     // Form untuk update status pembayaran
     const { put, processing } = useForm();
@@ -201,7 +205,7 @@ const Pembayaran = ({ pembayaran, event }) => {
     };
 
     return (
-        <>
+        <DashboardLayout>
             <Head title="Data Pembayaran" />
 
             <div className="min-h-screen bg-gray-50 py-8">
@@ -477,7 +481,7 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
                                                     {formatCurrency(
                                                         item.jumlah_bayar ||
-                                                            item.total_bayar ||
+                                                            item.total_harga ||
                                                             0
                                                     )}
                                                 </td>
@@ -502,11 +506,26 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                     <div className="flex items-center space-x-2">
+                                                        {/* <SheetDetail
+                                                            title="Detail Pembayaran"
+                                                            item={item}
+                                                            trigger={
+                                                                <div className="inline-flex items-center px-2 py-1 border cursor-pointer border-transparent text-xs leading-4 font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                                                                    <FaEye
+                                                                        className="mr-1"
+                                                                        size={
+                                                                            10
+                                                                        }
+                                                                    />
+                                                                    Detail
+                                                                </div>
+                                                            }
+                                                        /> */}
                                                         <Link
-                                                            // href={route(
-                                                            //     "payment.detail",
-                                                            //     item.id
-                                                            // )}
+                                                            href={route(
+                                                                "order.detail",
+                                                                item.id
+                                                            )}
                                                             className="inline-flex items-center px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
                                                         >
                                                             <FaEye
@@ -515,8 +534,7 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                             />
                                                             Detail
                                                         </Link>
-
-                                                        {item.status_pembayaran ===
+                                                        {item.status ===
                                                             "pending" && (
                                                             <>
                                                                 <button
@@ -642,7 +660,7 @@ const Pembayaran = ({ pembayaran, event }) => {
                     </div>
                 </div>
             </div>
-        </>
+        </DashboardLayout>
     );
 };
 

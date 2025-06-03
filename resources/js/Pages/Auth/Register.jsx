@@ -5,6 +5,7 @@ import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Textarea } from "@headlessui/react";
 import { Head, Link, useForm } from "@inertiajs/react";
+import Swal from "sweetalert2";
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -19,8 +20,14 @@ export default function Register() {
     const submit = (e) => {
         e.preventDefault();
         post(route("register"), {
+            onSuccess: () => {
+                Swal.fire("Berhasil!", "Registrasi berhasil.", "success");
+                reset(); // Reset form setelah berhasil
+            },
             onFinish: () => reset("password", "password_confirmation"),
-            onError: (errors) => Object.keys(errors).length > 0 && alert(Object.values(errors)[0]),
+            onError: (errors) =>
+                Object.keys(errors).length > 0 &&
+                alert(Object.values(errors)[0]),
         });
     };
 

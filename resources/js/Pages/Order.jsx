@@ -1,4 +1,4 @@
-import WelcomeLayout from "@/Layouts/WelcomeLayout";
+import DashboardLayout from "@/Layouts/DashboardLayout";
 import { useForm } from "@inertiajs/react";
 import React from "react";
 
@@ -14,7 +14,7 @@ const Order = ({ pembayaran }) => {
         });
     };
     return (
-        <WelcomeLayout>
+        <DashboardLayout>
             <div className="min-h-screen bg-gray-100 py-10 px-6">
                 <h1 className="text-center text-2xl font-bold border-b pb-4 mb-10">
                     Checkout
@@ -61,7 +61,7 @@ const Order = ({ pembayaran }) => {
                     </div>
                 </div>
             </div>
-        </WelcomeLayout>
+        </DashboardLayout>
     );
 };
 
