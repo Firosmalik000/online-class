@@ -1,3 +1,4 @@
+import { Link } from "@inertiajs/react";
 import React from "react";
 import { FaChalkboardTeacher, FaInfoCircle } from "react-icons/fa";
 
@@ -24,12 +25,12 @@ const Hero = () => {
                     </span>
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                    <a
-                        href="#kelas"
+                    <Link
+                        href={route("kursus.index")}
                         className="flex items-center justify-center gap-2 bg-yellow-400 text-blue-800 px-6 py-3 rounded-xl font-semibold shadow hover:bg-yellow-300 transition"
                     >
                         <FaChalkboardTeacher /> Lihat Kelas
-                    </a>
+                    </Link>
                     <a
                         href="#info"
                         className="flex items-center justify-center gap-2 bg-blue-800 px-6 py-3 text-white rounded-xl font-semibold hover:bg-white hover:text-blue-800 transition"

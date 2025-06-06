@@ -11,43 +11,54 @@ import {
     FaCreditCard,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
-import WelcomeLayout from "@/Layouts/WelcomeLayout";
-import { SheetDetail } from "@/Components/SheetDetail";
+
 import DashboardLayout from "@/Layouts/DashboardLayout";
 
 const Pembayaran = ({ pembayaran, event }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [methodFilter, setMethodFilter] = useState("all");
-    const [detail, setDetail] = useState(false);
 
-    // Form untuk update status pembayaran
     const { put, processing } = useForm();
 
     // Filter data berdasarkan pencarian, status, dan metode
     const filteredData = pembayaran.filter((item) => {
         const matchesSearch =
-            item.nama?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.kelas?.nama_kelas
+            item?.pendaftaran?.peserta?.nama
                 ?.toLowerCase()
                 .includes(searchTerm.toLowerCase()) ||
-            item.nomor_transaksi
+            item?.pendaftaran?.peserta?.email
+                ?.toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+            item?.pendaftaran.kelas?.nama_kelas
+                ?.toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+            item?.pendaftaran.nomor_transaksi
                 ?.toLowerCase()
                 .includes(searchTerm.toLowerCase());
 
         const matchesStatus =
-            statusFilter === "all" || item.status_pembayaran === statusFilter;
-        // const matchesMethod =
-        //     methodFilter === "all" || item.metode_pembayaran === methodFilter;
+            statusFilter === "all" || item?.status === statusFilter;
+        const matchesMethod =
+            methodFilter === "all" ||
+            item?.pendaftaran.metode_pembayaran === methodFilter;
 
-        return item;
+        // return item;
+        return matchesSearch && matchesStatus && matchesMethod;
     });
-    console.log({ filteredData });
+    console.log({ pembayaran });
 
-    // Fungsi untuk mendapatkan badge status pembayaran
     const getPaymentStatusBadge = (status) => {
+        const normalizedStatus = (status || "").toString().trim().toLowerCase();
+        console.log({ normalizedStatus });
+
         const statusConfig = {
+            belum: {
+                bg: "bg-blue-500",
+                text: "text-white",
+                label: "Belum",
+                icon: FaClock,
+            },
             pending: {
                 bg: "bg-yellow-100",
                 text: "text-yellow-800",
@@ -83,9 +94,10 @@ const Pembayaran = ({ pembayaran, event }) => {
         const config = statusConfig[status] || {
             bg: "bg-gray-100",
             text: "text-gray-800",
-            label: status,
+            label: status || "Unknown",
             icon: FaClock,
         };
+
         const IconComponent = config.icon;
 
         return (
@@ -174,7 +186,7 @@ const Pembayaran = ({ pembayaran, event }) => {
                 put(
                     route("payment.update-status", id),
                     {
-                        status_pembayaran: newStatus,
+                        status: newStatus,
                     },
                     {
                         onSuccess: () => {
@@ -200,7 +212,7 @@ const Pembayaran = ({ pembayaran, event }) => {
     // Hitung total pembayaran berdasarkan status
     const getTotalByStatus = (status) => {
         return pembayaran
-            .filter((item) => item.status_pembayaran === status)
+            .filter((item) => item.status === status)
             .reduce((total, item) => total + (item.jumlah_bayar || 0), 0);
     };
 
@@ -253,8 +265,8 @@ const Pembayaran = ({ pembayaran, event }) => {
                                         {
                                             pembayaran.filter(
                                                 (item) =>
-                                                    item.status_pembayaran ===
-                                                    "pending"
+                                                    item.status === "pending" ||
+                                                    item.status === "belum"
                                             ).length
                                         }
                                     </p>
@@ -274,9 +286,7 @@ const Pembayaran = ({ pembayaran, event }) => {
                                     <p className="text-xl font-bold text-gray-900">
                                         {
                                             pembayaran.filter(
-                                                (item) =>
-                                                    item.status_pembayaran ===
-                                                    "paid"
+                                                (item) => item.status === "paid"
                                             ).length
                                         }
                                     </p>
@@ -297,7 +307,7 @@ const Pembayaran = ({ pembayaran, event }) => {
                                         {
                                             pembayaran.filter((item) =>
                                                 ["failed", "expired"].includes(
-                                                    item.status_pembayaran
+                                                    item.status
                                                 )
                                             ).length
                                         }
@@ -339,6 +349,7 @@ const Pembayaran = ({ pembayaran, event }) => {
                                         <option value="all">
                                             Semua Status
                                         </option>
+                                        <option value="belum">Belum</option>
                                         <option value="pending">
                                             Menunggu
                                         </option>
@@ -493,8 +504,7 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     {getPaymentStatusBadge(
-                                                        item.status_pembayaran ||
-                                                            "pending"
+                                                        item.status || "pending"
                                                     )}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
