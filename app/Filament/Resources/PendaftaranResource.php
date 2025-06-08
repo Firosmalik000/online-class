@@ -33,13 +33,26 @@ class PendaftaranResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('id_peserta')
+                    ->getStateUsing(fn ($record) => $record->peserta->name ?? 'Tidak Diketahui')
+                    ->label('Nama Pendaftar')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('Kelas')
+                    ->getStateUsing(fn ($record) => $record->kelas->nama_kelas ?? 'Tidak Diketahui')
+                    ->label('Kelas')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Tanggal Pendaftaran')
+                    ->dateTime()
+                    ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
