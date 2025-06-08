@@ -6,7 +6,6 @@ import Swal from "sweetalert2";
 import { decodeHtml } from "@/Helpers/Decode";
 
 const Detail = ({ kelas }) => {
-    // Gunakan kelas.id sebagai parameter untuk route
     const { data, post, processing, errors, reset } = useForm({
         kelas_id: kelas.id_kelas,
     });
@@ -17,24 +16,26 @@ const Detail = ({ kelas }) => {
         post(route("order.store", kelas.id_kelas), {
             data: data,
             onSuccess: (page) => {
-                Swal.fire("Berhasil!", "Pendaftaran berhasil.", "success");
-                if (page.props.pendaftaran_id) {
-                    // <-- bagian ini yang perlu disesuaikan
+                if (page.props.pendaftaran) {
                     window.location.href = route(
                         "order.detail",
-                        page.props.pendaftaran_id // <-- dan ini
+                        page.props.pendaftaran.id_pendaftaran
                     );
+                    Swal.fire("Berhasil!", "Pendaftaran berhasil.", "success");
                 } else {
                     console.warn("pendaftaran_id tidak ditemukan di respons.");
                 }
-                reset(); // Reset form setelah berhasil
+                reset();
             },
-            onError: (formErrors) => {
-                let errorMessage = "Terjadi kesalahan.";
-                if (Object.keys(formErrors).length > 0) {
-                    errorMessage = Object.values(formErrors).join("\n");
+            onError: (errors) => {
+                if (errors.message) {
+                    Swal.fire("Gagal!", errors.message, "error");
+                } else if (errors.errors) {
+                    const firstError = Object.values(errors.errors)[0][0];
+                    Swal.fire("Gagal!", firstError, "error");
+                } else {
+                    Swal.fire("Gagal!", "Terjadi kesalahan.", "error");
                 }
-                Swal.fire("Error", errorMessage, "error");
             },
         });
     };
@@ -61,7 +62,11 @@ const Detail = ({ kelas }) => {
                             <h2 className="text-lg font-semibold mb-2">
                                 Description
                             </h2>
-                            <div dangerouslySetInnerHTML={{ __html: kelas.deskripsi }} />
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: kelas.deskripsi,
+                                }}
+                            />
                         </div>
 
                         {/* Pengajar */}
