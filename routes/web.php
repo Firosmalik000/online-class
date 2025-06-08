@@ -7,7 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KursusKontroller;
 use App\Http\Controllers\DetailController;
 use App\Http\Controllers\PendaftaranController;
-use Inertia\Inertia;
+// use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->name('home.index');
 Route::get('/kursus', [KursusKontroller::class, 'index'])->name('kursus.index');
@@ -19,6 +19,7 @@ Route::middleware('auth')->group(function () {
     // });
     Route::post('/checkout', [PendaftaranController::class, 'update'])->name('pendaftaran.update');
     Route::get('/order', [PendaftaranController::class, 'index'])->name('order.index'); 
+    Route::get('/course', [PendaftaranController::class, 'myCourse'])->name('course.myCourse'); 
     Route::post('/order/{id_kelas}', [PendaftaranController::class, 'store'])->name('order.store');
     Route::get('/order/{id}', [PendaftaranController::class, 'detail'])->name('order.detail');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -15,7 +15,7 @@ export default function WelcomeLayout({ children }) {
     console.log({ user });
     return (
         <div className="min-h-screen bg-gray-50 text-gray-800 ">
-            <nav className="bg-white shadow ">
+            <nav className="bg-white shadow fixed w-full z-50">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between items-center">
                         <div className="flex items-center gap-6">

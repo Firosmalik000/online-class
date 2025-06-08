@@ -23,6 +23,19 @@ class PendaftaranController extends Controller
             'pembayaran' => $pembayaran,
         ]);
     }
+    public function myCourse(){
+        $pembayaran = Pembayaran::with('pendaftaran.kelas', 'pendaftaran.peserta')
+        ->whereHas('pendaftaran', function ($query) {
+            $query->where('id_peserta', auth()->id());
+        })
+        ->where('status', 'lunas')
+        ->get();
+        // dd($pembayaran);
+    
+        return Inertia::render('MyCourse', [
+            'kursus' => $pembayaran,
+        ]);
+    }
     public function detail(Request $request, $id_pendaftaran)
     {
         $pembayaran = Pembayaran::with('pendaftaran.kelas')->where('id_pendaftaran', $id_pendaftaran)->first();
@@ -43,29 +56,31 @@ class PendaftaranController extends Controller
                 $pembayaran->save();
                 DB::commit();
                 return Inertia::render('Pembayaran', [
-                    'pembayaran' => Pembayaran::with('pendaftaran.kelas')->where('pendaftaran.id_peserta', auth()->id())->get(),
+                    'pembayaran' => Pembayaran::with('pendaftaran.kelas')
+                    ->whereHas('pendaftaran.peserta', function ($query) {
+                        $query->where('id_pengguna', auth()->id());
+                    })
+                    ->get(),
                     'message' => 'Pembayaran Berhasil'
                 ]);
             }else{
                 DB::rollBack();
             }
         }catch (\Exception $e){
-
+            DB::rollBack();
+            return response()->json(['line' => $e->getLine(), 'file' => $e->getFile(), 'message' => $e->getMessage()], 400);
         }
     }
 
     public function store(Request $request, $id_kelas)
     {
-        // dd($request->all());
         DB::beginTransaction();
         try {
-            // dd($request->all());
             $kelas = Kelas::find($id_kelas);
 
             $isExist = Pendaftaran::where('id_peserta', auth()->id())
                     ->where('id_kelas', $kelas->id_kelas)
                     ->first();
-            // dd($isExist);
             if($isExist){
                 return response()->json(['message' => 'Anda sudah terdaftar di kelas ini'], 400);
             }

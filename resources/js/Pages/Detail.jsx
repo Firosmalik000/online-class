@@ -8,19 +8,22 @@ import { decodeHtml } from "@/Helpers/Decode";
 const Detail = ({ kelas }) => {
     // Gunakan kelas.id sebagai parameter untuk route
     const { data, post, processing, errors, reset } = useForm({
-        kelas_id: kelas.id_kelas // Pastikan ini sesuai dengan field yang diharapkan di Laravel
+        kelas_id: kelas.id_kelas,
     });
 
     const submit = (e) => {
         e.preventDefault();
 
-        // Gunakan kelas.id sebagai parameter route, bukan data.id
         post(route("order.store", kelas.id_kelas), {
-            data: data, // Kirim data form sebagai body request
+            data: data,
             onSuccess: (page) => {
                 Swal.fire("Berhasil!", "Pendaftaran berhasil.", "success");
                 if (page.props.pendaftaran_id) {
-                    window.location.href = route("order.detail", page.props.pendaftaran_id);
+                    // <-- bagian ini yang perlu disesuaikan
+                    window.location.href = route(
+                        "order.detail",
+                        page.props.pendaftaran_id // <-- dan ini
+                    );
                 } else {
                     console.warn("pendaftaran_id tidak ditemukan di respons.");
                 }
@@ -32,7 +35,7 @@ const Detail = ({ kelas }) => {
                     errorMessage = Object.values(formErrors).join("\n");
                 }
                 Swal.fire("Error", errorMessage, "error");
-            }
+            },
         });
     };
 
@@ -99,7 +102,9 @@ const Detail = ({ kelas }) => {
 
                                 <div className="space-y-4 text-sm text-gray-700">
                                     <div className="flex justify-between border-b pb-2">
-                                        <span className="font-medium">Jadwal</span>
+                                        <span className="font-medium">
+                                            Jadwal
+                                        </span>
                                         <span>
                                             {new Date(
                                                 kelas.jadwal
@@ -117,14 +122,17 @@ const Detail = ({ kelas }) => {
                                         <span>{kelas.kategori}</span>
                                     </div>
                                     <div className="flex justify-between border-b pb-2">
-                                        <span className="font-medium">Level</span>
+                                        <span className="font-medium">
+                                            Level
+                                        </span>
                                         <span>{kelas.level}</span>
                                     </div>
                                     <div className="flex justify-between pb-2">
                                         <span className="font-medium">
                                             Jumlah Peserta
                                         </span>
-                                        <span>123</span> {/* Sesuaikan dengan data riil */}
+                                        <span>123</span>{" "}
+                                        {/* Sesuaikan dengan data riil */}
                                     </div>
                                 </div>
 
