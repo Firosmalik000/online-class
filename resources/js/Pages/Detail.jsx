@@ -3,6 +3,7 @@ import WelcomeLayout from "@/Layouts/WelcomeLayout";
 import { FaUser } from "react-icons/fa";
 import { useForm } from "@inertiajs/react";
 import Swal from "sweetalert2";
+import { decodeHtml } from "@/Helpers/Decode";
 
 const Detail = ({ kelas }) => {
     // Gunakan kelas.id sebagai parameter untuk route
@@ -60,9 +61,7 @@ const Detail = ({ kelas }) => {
                             <h2 className="text-lg font-semibold mb-2">
                                 Description
                             </h2>
-                            <p className="text-justify leading-relaxed">
-                                {kelas.deskripsi}
-                            </p>
+                            <div dangerouslySetInnerHTML={{ __html: kelas.deskripsi }} />
                         </div>
 
                         {/* Pengajar */}
