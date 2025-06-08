@@ -36,6 +36,10 @@ class HandleInertiaRequests extends Middleware
             ],
             'env' => [
                 'midtrans_client_key' => config('midtrans.client_key'),
+                'midtrans_server_key' => config('midtrans.server_key'),
+                'midtrans_is_production' => config('midtrans.is_production'),
+                'midtrans_is_sanitized' => config('midtrans.is_sanitized'),
+                'midtrans_is_3ds' => config('midtrans.is_3ds'),
             ]
         ];
     }
