@@ -18,7 +18,7 @@ class PaymentController extends Controller
 
     public function createCharge(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $params = [
             'transaction_details' => [
                 'order_id' => rand(),

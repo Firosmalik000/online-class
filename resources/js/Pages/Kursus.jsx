@@ -9,10 +9,10 @@ const Kursus = () => {
     const [filter, setFilter] = useState("semua");
     const [search, setSearch] = useState("");
     const { kelas, kategori } = usePage().props;
-    console.log(search);
+
     return (
         <WelcomeLayout>
-            <div className="flex min-h-screen items-start justify-center px-6 md:px-24 mt-16 gap-6">
+            <div className="flex min-h-screen items-start justify-center px-6 md:px-24 pt-16 gap-6">
                 {/* Sidebar Kategori */}
                 <aside className="w-full md:w-1/6 bg-white shadow-md rounded-xl p-5 sticky top-24">
                     <div className="w-full mb-2">

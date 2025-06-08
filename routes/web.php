@@ -7,7 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KursusKontroller;
 use App\Http\Controllers\DetailController;
 use App\Http\Controllers\PendaftaranController;
-use Inertia\Inertia;
+// use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->name('home.index');
 Route::get('/kursus', [KursusKontroller::class, 'index'])->name('kursus.index');

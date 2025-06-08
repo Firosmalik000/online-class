@@ -48,9 +48,16 @@ const EventSection = ({ kelas, filter, search }) => {
                                 <h3 className="text-2xl font-semibold text-blue-800">
                                     {event.nama_kelas}
                                 </h3>
-                                <p className="text-gray-600 mt-1 mb-3">
-                                    {event.deskripsi.substring(0, 80)} ...
-                                </p>
+                                <p
+                                    className="text-gray-600 mt-1 mb-3"
+                                    dangerouslySetInnerHTML={{
+                                        __html:
+                                            event.deskripsi.substring(0, 80) +
+                                            (event.deskripsi.length > 80
+                                                ? " ..."
+                                                : ""),
+                                    }}
+                                />
                             </div>
 
                             <div className="text-sm text-gray-700 space-y-1">

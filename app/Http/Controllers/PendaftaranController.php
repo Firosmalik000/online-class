@@ -35,6 +35,7 @@ class PendaftaranController extends Controller
     public function update(Request $request){
         DB::beginTransaction();
         try{
+            dd($request->all());
             $pembayaran = Pembayaran::find($request->id);
             if($pembayaran){
                 $pembayaran->status = $request->status;
