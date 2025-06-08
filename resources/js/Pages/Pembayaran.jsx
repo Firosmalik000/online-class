@@ -46,11 +46,9 @@ const Pembayaran = ({ pembayaran, event }) => {
         // return item;
         return matchesSearch && matchesStatus && matchesMethod;
     });
-    console.log({ pembayaran });
 
     const getPaymentStatusBadge = (status) => {
         const normalizedStatus = (status || "").toString().trim().toLowerCase();
-        console.log({ normalizedStatus });
 
         const statusConfig = {
             belum: {
@@ -245,7 +243,7 @@ const Pembayaran = ({ pembayaran, event }) => {
                                     </p>
                                     <p className="text-xl font-bold text-gray-900">
                                         {formatCurrency(
-                                            getTotalByStatus("paid")
+                                            getTotalByStatus("lunas")
                                         )}
                                     </p>
                                 </div>
@@ -286,7 +284,7 @@ const Pembayaran = ({ pembayaran, event }) => {
                                     <p className="text-xl font-bold text-gray-900">
                                         {
                                             pembayaran.filter(
-                                                (item) => item.status === "paid"
+                                                (item) => item.status === "lunas"
                                             ).length
                                         }
                                     </p>
@@ -306,7 +304,7 @@ const Pembayaran = ({ pembayaran, event }) => {
                                     <p className="text-xl font-bold text-gray-900">
                                         {
                                             pembayaran.filter((item) =>
-                                                ["failed", "expired"].includes(
+                                                ["belum"].includes(
                                                     item.status
                                                 )
                                             ).length
@@ -353,7 +351,7 @@ const Pembayaran = ({ pembayaran, event }) => {
                                         <option value="pending">
                                             Menunggu
                                         </option>
-                                        <option value="paid">Lunas</option>
+                                        <option value="lunas">Lunas</option>
                                         <option value="failed">Gagal</option>
                                         <option value="expired">
                                             Kadaluarsa
@@ -492,14 +490,14 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
                                                     {formatCurrency(
                                                         item.jumlah_bayar ||
-                                                            item.total_harga ||
-                                                            0
+                                                        item.total_harga ||
+                                                        0
                                                     )}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     {getPaymentMethodBadge(
                                                         item.metode_pembayaran ||
-                                                            "transfer"
+                                                        "transfer"
                                                     )}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -510,8 +508,8 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {item.created_at
                                                         ? formatDate(
-                                                              item.created_at
-                                                          )
+                                                            item.created_at
+                                                        )
                                                         : "N/A"}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -546,49 +544,49 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                         </Link>
                                                         {item.status ===
                                                             "pending" && (
-                                                            <>
-                                                                <button
-                                                                    onClick={() =>
-                                                                        handleUpdateStatus(
-                                                                            item.id,
-                                                                            "paid"
-                                                                        )
-                                                                    }
-                                                                    disabled={
-                                                                        processing
-                                                                    }
-                                                                    className="inline-flex items-center px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200"
-                                                                >
-                                                                    <FaCheck
-                                                                        className="mr-1"
-                                                                        size={
-                                                                            10
+                                                                <>
+                                                                    <button
+                                                                        onClick={() =>
+                                                                            handleUpdateStatus(
+                                                                                item.id,
+                                                                                "paid"
+                                                                            )
                                                                         }
-                                                                    />
-                                                                    Konfirmasi
-                                                                </button>
-                                                                <button
-                                                                    onClick={() =>
-                                                                        handleUpdateStatus(
-                                                                            item.id,
-                                                                            "failed"
-                                                                        )
-                                                                    }
-                                                                    disabled={
-                                                                        processing
-                                                                    }
-                                                                    className="inline-flex items-center px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
-                                                                >
-                                                                    <FaTimes
-                                                                        className="mr-1"
-                                                                        size={
-                                                                            10
+                                                                        disabled={
+                                                                            processing
                                                                         }
-                                                                    />
-                                                                    Tolak
-                                                                </button>
-                                                            </>
-                                                        )}
+                                                                        className="inline-flex items-center px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200"
+                                                                    >
+                                                                        <FaCheck
+                                                                            className="mr-1"
+                                                                            size={
+                                                                                10
+                                                                            }
+                                                                        />
+                                                                        Konfirmasi
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() =>
+                                                                            handleUpdateStatus(
+                                                                                item.id,
+                                                                                "failed"
+                                                                            )
+                                                                        }
+                                                                        disabled={
+                                                                            processing
+                                                                        }
+                                                                        className="inline-flex items-center px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
+                                                                    >
+                                                                        <FaTimes
+                                                                            className="mr-1"
+                                                                            size={
+                                                                                10
+                                                                            }
+                                                                        />
+                                                                        Tolak
+                                                                    </button>
+                                                                </>
+                                                            )}
 
                                                         {item.bukti_pembayaran && (
                                                             <a
@@ -624,9 +622,9 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                     </p>
                                                     <p className="text-gray-400 text-sm mt-1">
                                                         {searchTerm ||
-                                                        statusFilter !==
+                                                            statusFilter !==
                                                             "all" ||
-                                                        methodFilter !== "all"
+                                                            methodFilter !== "all"
                                                             ? "Coba ubah filter pencarian Anda"
                                                             : "Belum ada transaksi pembayaran yang masuk"}
                                                     </p>

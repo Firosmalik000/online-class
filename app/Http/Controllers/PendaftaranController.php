@@ -38,7 +38,9 @@ class PendaftaranController extends Controller
             dd($request->all());
             $pembayaran = Pembayaran::find($request->id);
             if($pembayaran){
-                $pembayaran->status = $request->status;
+                $pembayaran->status = $request->status ?? 'belum';
+                $pembayaran->metode = $request->metode ?? null;
+                $pembayaran->error = $request->error ?? null;
                 $pembayaran->save();
                 DB::commit();
                 return Inertia::render('Pembayaran', [

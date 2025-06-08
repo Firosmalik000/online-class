@@ -33,13 +33,36 @@ class PembayaranResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('pendaftaran.kelas.nama_kelas')
+                    ->label('Kelas')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('pendaftaran.peserta.name')
+                    ->label('Nama Peserta')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status Pembayaran')
+                    ->badge()
+                    ->colors([
+                        'pending' => 'warning',
+                        'lunas' => 'success',
+                        'belum' => 'danger',
+                    ]),
+                Tables\Columns\TextColumn::make('total_harga')
+                    ->label('Total Harga')
+                    ->money('IDR', true)
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Tanggal Pembayaran')
+                    ->dateTime()
+                    ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
