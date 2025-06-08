@@ -14,6 +14,6 @@ class Pembayaran extends Model
 
     public function pendaftaran()
     {
-        return $this->belongsTo(Pendaftaran::class, 'id_pendaftaran');
+        return $this->belongsTo(Pendaftaran::class, 'id_pendaftaran')->with('peserta');
     }
 }

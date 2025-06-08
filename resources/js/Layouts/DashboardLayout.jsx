@@ -37,7 +37,12 @@ export default function DashboardLayout({ children }) {
                         </div>
                     </div>
                     <nav className="flex flex-col gap-2 mt-4">
-                        <NavLink href={route("order.index")}>Kursus</NavLink>
+                        <NavLink href={route("course.myCourse")}>
+                            Kursus Saya
+                        </NavLink>
+                        <NavLink href={route("order.index")}>
+                            Order Detail
+                        </NavLink>
                         <NavLink href="/profile">Setting</NavLink>
                     </nav>
                 </div>

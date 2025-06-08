@@ -60,8 +60,6 @@ export default function UpdateProfileInformation({
         });
     };
 
-    console.log({ data, errors }); // Log data dan errors untuk debugging
-
     return (
         <section className={`bg-white p-6 shadow rounded-xl ${className}`}>
             <header className="mb-6">
