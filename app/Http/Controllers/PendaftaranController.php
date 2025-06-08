@@ -17,7 +17,6 @@ class PendaftaranController extends Controller
             $query->where('id_peserta', auth()->id());
         })
         ->get();
-        // dd($pembayaran);
     
         return Inertia::render('Pembayaran', [
             'pembayaran' => $pembayaran,
@@ -30,7 +29,6 @@ class PendaftaranController extends Controller
         })
         ->where('status', 'lunas')
         ->get();
-        // dd($pembayaran);
     
         return Inertia::render('MyCourse', [
             'kursus' => $pembayaran,
@@ -50,7 +48,7 @@ class PendaftaranController extends Controller
         try{
             $pembayaran = Pembayaran::find($request->id);
             if($pembayaran){
-                $pembayaran->status = $request->status ?? 'belum';
+                $pembayaran->status = $request->status ?? null;
                 $pembayaran->metode = $request->metode ?? null;
                 $pembayaran->error = $request->error ?? null;
                 $pembayaran->save();
@@ -77,12 +75,19 @@ class PendaftaranController extends Controller
         DB::beginTransaction();
         try {
             $kelas = Kelas::find($id_kelas);
-
+   if (!$kelas) {
+                        DB::rollBack();
+                             return back()->withErrors(['message' => 'Kelas tidak ditemukan'], 404);
+                     }
             $isExist = Pendaftaran::where('id_peserta', auth()->id())
                     ->where('id_kelas', $kelas->id_kelas)
                     ->first();
-            if($isExist){
-                return response()->json(['message' => 'Anda sudah terdaftar di kelas ini'], 400);
+    
+            if ($isExist) {
+                DB::rollBack();
+                return back()->withErrors([
+                    'message' => 'Anda sudah terdaftar di kelas ini.'
+                ]);
             }
             $pendaftaran = new Pendaftaran();
             $pendaftaran->id_peserta =  auth()->id();
@@ -128,12 +133,13 @@ class PendaftaranController extends Controller
             DB::commit();
             return Inertia::render('DetailPembayaran', [
                 'pembayaran' => $pembayaran,
+                'pendaftaran' => $pendaftaran,
                 'snapToken' => $snapToken,
                 'messsage' => 'Pendaftaran Berhasil'
             ]);
         } catch (\Throwable $th) {
             DB::rollBack();
-            return response()->json(['message' => 'Pendaftaran Gagal', 'success' => false, 'status' => 500, 'error' => $th->getMessage(), 'line' => $th->getLine(), 'file' => $th->getFile(), 'trace' => $th->getTrace()], 500);
+             return back()->withErrors(['message' => 'Pendaftaran Gagal', 'success' => false, 'status' => 500, 'error' => $th->getMessage(), 'line' => $th->getLine(), 'file' => $th->getFile(), 'trace' => $th->getTrace()], 500);
         }
     }
 }

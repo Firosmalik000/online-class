@@ -27,9 +27,7 @@ class HomeController extends Controller
 //     }
 public function index()
 {
-    $kelas = Kelas::with('pengajar')->paginate(6); // ubah jumlah sesuai kebutuhan
-
-    // Ambil kategori dari semua data (tanpa pagination) atau dari paginated data jika tidak masalah
+    $kelas = Kelas::with('pengajar')->paginate(6); 
     $allKelas = Kelas::all(); 
     $kategori = [];
 
@@ -44,7 +42,7 @@ public function index()
     return Inertia::render('Welcome', [
         'kelas' => $kelas,
         'kategori' => array_values($kategori),
-        'filters' => Request::only('page'), // agar state URL tetap terjaga
+        'filters' => Request::only('page'), 
     ]);
 }
     
