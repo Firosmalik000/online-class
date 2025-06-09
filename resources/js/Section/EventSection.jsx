@@ -1,6 +1,16 @@
+import React from "react";
+import { motion } from "framer-motion";
 import { decodeHtml } from "@/Helpers/Decode";
 import { Link } from "@inertiajs/react";
-import React from "react";
+
+const cardVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+        opacity: 1,
+        scale: 1,
+        transition: { duration: 0.4, ease: "easeOut" },
+    },
+};
 
 const EventSection = ({ kelas, filter, search }) => {
     const filteredKelas = kelas?.data?.filter((event) => {
@@ -34,10 +44,15 @@ const EventSection = ({ kelas, filter, search }) => {
                 Pelatihan Web Development
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredKelas?.map((event) => (
-                    <div
+                {filteredKelas?.map((event, index) => (
+                    <motion.div
                         key={event.id}
                         className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300"
+                        variants={cardVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{ delay: index * 0.15 }}
                     >
                         <img
                             src={"/storage/" + event.banner}
@@ -49,7 +64,12 @@ const EventSection = ({ kelas, filter, search }) => {
                                 <h3 className="text-2xl font-semibold text-blue-800">
                                     {event.nama_kelas}
                                 </h3>
-                                <div className="text-gray-600 mt-1 mb-3 line-clamp-3" dangerouslySetInnerHTML={{ __html: event.deskripsi }} />
+                                <div
+                                    className="text-gray-600 mt-1 mb-3 line-clamp-3"
+                                    dangerouslySetInnerHTML={{
+                                        __html: event.deskripsi,
+                                    }}
+                                />
                             </div>
 
                             <div className="text-sm text-gray-700 space-y-1">
@@ -86,7 +106,7 @@ const EventSection = ({ kelas, filter, search }) => {
                                 </Link>
                             </a>
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
             </div>
 
@@ -99,9 +119,10 @@ const EventSection = ({ kelas, filter, search }) => {
                         disabled={!link.url}
                         dangerouslySetInnerHTML={{ __html: link.label }}
                         className={`px-4 py-2 rounded text-sm
-                            ${link.active
-                                ? "bg-blue-600 text-white"
-                                : link.url
+                            ${
+                                link.active
+                                    ? "bg-blue-600 text-white"
+                                    : link.url
                                     ? "bg-white text-blue-600 border border-blue-400 hover:bg-blue-100"
                                     : "bg-gray-200 text-gray-500 cursor-not-allowed"
                             }
