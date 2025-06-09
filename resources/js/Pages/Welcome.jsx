@@ -11,8 +11,9 @@ export default function Welcome() {
     return (
         <WelcomeLayout>
             <Head title="Welcome" />
+
+            <Hero />
             <div className="flex min-h-screen flex-col items-center justify-center  text-gray-700 px-24">
-                <Hero />
                 <Kategori kategori={kategori} setFilter={setFilter} />
                 <EventSection kelas={kelas} filter={filter} />
             </div>

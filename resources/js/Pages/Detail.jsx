@@ -1,9 +1,9 @@
-import React, { useRef } from "react";
+import React from "react";
+import { motion } from "framer-motion"; // import framer-motion
 import WelcomeLayout from "@/Layouts/WelcomeLayout";
 import { FaUser } from "react-icons/fa";
 import { useForm } from "@inertiajs/react";
 import Swal from "sweetalert2";
-import { decodeHtml } from "@/Helpers/Decode";
 
 const Detail = ({ kelas }) => {
     const { data, post, processing, errors, reset } = useForm({
@@ -40,12 +40,28 @@ const Detail = ({ kelas }) => {
         });
     };
 
+    // Variants untuk animasi
+    const containerVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: (customDelay = 0) => ({
+            opacity: 1,
+            y: 0,
+            transition: { delay: customDelay, duration: 0.5, ease: "easeOut" },
+        }),
+    };
+
     return (
         <WelcomeLayout>
-            <section className="min-h-screen px-6 lg:px-24 py-16 text-gray-800">
+            <section className="min-h-screen px-6 lg:px-24 py-24 text-gray-800">
                 <div className="flex flex-col lg:flex-row gap-10">
                     {/* Kiri - Konten utama */}
-                    <div className="w-full lg:w-2/3">
+                    <motion.div
+                        className="w-full lg:w-2/3"
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        custom={0} // delay 0s
+                    >
                         <h1 className="text-3xl font-bold mb-4">
                             {kelas.nama_kelas}
                         </h1>
@@ -95,10 +111,16 @@ const Detail = ({ kelas }) => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Kanan - Info Harga */}
-                    <div className="w-full lg:w-1/3">
+                    <motion.div
+                        className="w-full lg:w-1/3"
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        custom={0.3} // delay 0.3s (sedikit lebih lambat dari kiri)
+                    >
                         <form onSubmit={submit}>
                             <div className="border rounded-xl p-6 shadow-md">
                                 <h3 className="text-2xl font-bold text-right mb-6">
@@ -137,7 +159,6 @@ const Detail = ({ kelas }) => {
                                             Jumlah Peserta
                                         </span>
                                         <span>123</span>{" "}
-                                        {/* Sesuaikan dengan data riil */}
                                     </div>
                                 </div>
 
@@ -151,7 +172,7 @@ const Detail = ({ kelas }) => {
                                 </button>
                             </div>
                         </form>
-                    </div>
+                    </motion.div>
                 </div>
             </section>
         </WelcomeLayout>

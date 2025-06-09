@@ -1,11 +1,22 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 const Footer = () => {
     return (
-        <footer className="bg-gray-900 text-gray-200 pt-16 pb-8 px-6">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
+        <motion.footer
+            className="bg-gray-900 text-gray-200 pt-16 pb-8 px-6"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+        >
+            <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
                 {/* Branding */}
-                <div>
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                >
                     <h2 className="text-2xl font-bold text-yellow-400 mb-4">
                         Edu-cause
                     </h2>
@@ -17,10 +28,14 @@ const Footer = () => {
                     <p className="italic mt-2 text-sm">
                         Build your skill with Kursus Sipil
                     </p>
-                </div>
+                </motion.div>
 
                 {/* Contact */}
-                <div>
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4, duration: 0.5 }}
+                >
                     <h3 className="text-xl font-semibold text-white mb-4">
                         Contact With Us
                     </h3>
@@ -28,10 +43,14 @@ const Footer = () => {
                         <li>📞 +62 812-5544-2561</li>
                         <li>📧 info@kursussipil.id</li>
                     </ul>
-                </div>
+                </motion.div>
 
                 {/* Kategori */}
-                <div>
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.6, duration: 0.5 }}
+                >
                     <h3 className="text-xl font-semibold text-white mb-4">
                         Kategori
                     </h3>
@@ -47,10 +66,14 @@ const Footer = () => {
                         <li>Mankon</li>
                         <li>GIS</li>
                     </ul>
-                </div>
+                </motion.div>
 
-                {/* Link lainnya */}
-                <div>
+                {/* Tentang Kami */}
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.8, duration: 0.5 }}
+                >
                     <h3 className="text-xl font-semibold text-white mb-4">
                         Tentang Kami
                     </h3>
@@ -86,29 +109,34 @@ const Footer = () => {
                             </a>
                         </li>
                     </ul>
-                </div>
+                </motion.div>
             </div>
 
-            <div className="border-t flex justify-between items-center border-gray-700 mt-12 pt-6 text-center text-sm">
-                <p className="mb-2">
-                    Copyright © 2025 Kursus Sipil Indonesia. All Rights Reserved
-                </p>
-                <div className="flex flex-wrap justify-center gap-4">
-                    <a href="#" className="hover:underline">
-                        Terms of service
-                    </a>
-                    <a href="#" className="hover:underline">
-                        Privacy policy
-                    </a>
-                    <a href="#" className="hover:underline">
-                        Subscription
-                    </a>
-                    <a href="#" className="hover:underline">
-                        Login & Register
-                    </a>
+            <motion.div
+                className="border-t border-gray-700 mt-12 pt-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1, duration: 0.5 }}
+            >
+                <div className="flex flex-col md:flex-row justify-between items-center text-center text-sm gap-4">
+                    <p>© 2025 Kursus Sipil Indonesia. All Rights Reserved</p>
+                    <div className="flex flex-wrap justify-center gap-4">
+                        <a href="#" className="hover:underline">
+                            Terms of service
+                        </a>
+                        <a href="#" className="hover:underline">
+                            Privacy policy
+                        </a>
+                        <a href="#" className="hover:underline">
+                            Subscription
+                        </a>
+                        <a href="#" className="hover:underline">
+                            Login & Register
+                        </a>
+                    </div>
                 </div>
-            </div>
-        </footer>
+            </motion.div>
+        </motion.footer>
     );
 };
 

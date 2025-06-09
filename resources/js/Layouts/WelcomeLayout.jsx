@@ -23,7 +23,6 @@ export default function WelcomeLayout({ children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
-    console.log({ user });
     return (
         <div className="min-h-screen bg-gray-50 text-gray-800 ">
             <nav className="bg-white shadow fixed w-full z-50">
