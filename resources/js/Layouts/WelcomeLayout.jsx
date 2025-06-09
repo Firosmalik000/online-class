@@ -4,10 +4,21 @@ import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import Footer from "@/Section/Footer";
 import { Link, usePage } from "@inertiajs/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function WelcomeLayout({ children }) {
+    const kelasall = usePage().props.allKelas;
     const user = usePage().props.auth.user;
+    const [search, setSearch] = useState("");
+    const [filtered, setFiltered] = useState(kelasall);
+
+    useEffect(() => {
+        setFiltered(
+            kelasall?.filter((kelas) =>
+                kelas?.nama_kelas.toLowerCase().includes(search.toLowerCase())
+            )
+        );
+    }, [search]);
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -22,6 +33,60 @@ export default function WelcomeLayout({ children }) {
                             <Link href="/">
                                 <ApplicationLogo className="h-9 w-auto text-gray-800 " />
                             </Link>
+                            <div className="relative w-full max-w-md">
+                                <div className="flex items-center bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={1.5}
+                                        stroke="currentColor"
+                                        className="w-5 h-5 text-gray-400"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.6 3.6a7.5 7.5 0 0013.05 13.05z"
+                                        />
+                                    </svg>
+                                    <input
+                                        type="search"
+                                        placeholder="Search kelas..."
+                                        className="ml-3 w-full bg-transparent focus:outline-none border-none"
+                                        onChange={(e) =>
+                                            setSearch(e.target.value)
+                                        }
+                                        value={search}
+                                    />
+                                </div>
+
+                                {search && (
+                                    <div className="absolute mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-64 overflow-auto">
+                                        {filtered?.length > 0 ? (
+                                            filtered?.map((kelas) => (
+                                                <Link
+                                                    key={kelas.id_kelas}
+                                                    href={`/detail/${kelas.id_kelas}`}
+                                                    className="flex items-center gap-4 px-4 py-3 hover:bg-gray-50 transition"
+                                                >
+                                                    <img
+                                                        src={`/storage/${kelas.banner}`}
+                                                        alt={kelas.nama_kelas}
+                                                        className="w-14 h-10 object-cover rounded-md border"
+                                                    />
+                                                    <p className="text-sm font-medium text-gray-800">
+                                                        {kelas.nama_kelas}
+                                                    </p>
+                                                </Link>
+                                            ))
+                                        ) : (
+                                            <div className="px-4 py-3 text-gray-500 text-sm">
+                                                Tidak ada hasil ditemukan.
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         <div className="flex items-center gap-6">
                             <NavLink

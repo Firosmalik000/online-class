@@ -15,7 +15,7 @@ export default function Register() {
         email: "",
         password: "",
         password_confirmation: "",
-        telpon: "",
+        telepon: "",
         alamat: "",
     });
 
@@ -71,23 +71,23 @@ export default function Register() {
                             />
                         </div>
 
-                        {/* Telpon */}
+                        {/* Telepon */}
                         <div className="mb-5">
-                            <InputLabel htmlFor="telpon" value="Telpon" />
+                            <InputLabel htmlFor="telepon" value="Telepon" />
                             <TextInput
                                 type="tel"
-                                id="telpon"
-                                name="telpon"
-                                value={data.telpon}
+                                id="telepon"
+                                name="telepon"
+                                value={data.telepon}
                                 className="mt-1 block w-full"
                                 autoComplete="tel"
                                 onChange={(e) =>
-                                    setData("telpon", e.target.value)
+                                    setData("telepon", e.target.value)
                                 }
                                 required
                             />
                             <InputError
-                                message={errors.telpon}
+                                message={errors.telepon}
                                 className="mt-2"
                             />
                         </div>
