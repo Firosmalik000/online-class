@@ -71,7 +71,7 @@ const DetailPembayaran = ({ pembayaran }) => {
                     setIsProcessing(false);
 
                     // Update status pembayaran ke server
-                    data.status = "pending";
+                    data.status = "gagal";
                     post(route("pendaftaran.update"), data);
                 },
 
