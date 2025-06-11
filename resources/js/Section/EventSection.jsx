@@ -1,6 +1,5 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { decodeHtml } from "@/Helpers/Decode";
 import { Link } from "@inertiajs/react";
 
 const cardVariants = {
@@ -13,18 +12,19 @@ const cardVariants = {
 };
 
 const EventSection = ({ kelas, filter, search }) => {
-    const filteredKelas = kelas?.data?.filter((event) => {
-        const kategoriList = event?.kategori?.split(",") ?? [];
+    const filteredKelas =
+        kelas?.data?.filter((event) => {
+            const kategoriList = event?.kategori?.split(",") ?? [];
 
-        const isKategoriMatch =
-            filter === "semua" || kategoriList.includes(filter);
+            const isKategoriMatch =
+                filter === "semua" || kategoriList.includes(filter);
 
-        const isSearchMatch =
-            !search ||
-            event.nama_kelas.toLowerCase().includes(search.toLowerCase());
+            const isSearchMatch =
+                !search ||
+                event.nama_kelas.toLowerCase().includes(search.toLowerCase());
 
-        return isKategoriMatch && isSearchMatch;
-    });
+            return isKategoriMatch && isSearchMatch;
+        }) || kelas;
 
     const formatDate = (date) => {
         const options = { day: "numeric", month: "long", year: "numeric" };
@@ -39,10 +39,7 @@ const EventSection = ({ kelas, filter, search }) => {
     };
 
     return (
-        <section className="py-10 px-5 bg-gradient-to-b from-white to-gray-100">
-            <h2 className="text-3xl font-bold text-center mb-10 text-blue-900">
-                Pelatihan Web Development
-            </h2>
+        <section className="py-4 px-5 bg-gradient-to-b from-white to-gray-100">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredKelas?.map((event, index) => (
                     <motion.div
