@@ -93,7 +93,7 @@ const PaymentMethodBadge = ({ method }) => {
             label: "QRIS",
             icon: FaBarcode,
         },
-        transfer: {
+        bank_transfer: {
             bg: "bg-blue-100",
             text: "text-blue-800",
             label: "Transfer Bank",
@@ -111,10 +111,10 @@ const PaymentMethodBadge = ({ method }) => {
             label: "Kartu Kredit",
             icon: FaCreditCard,
         },
-        cash: {
+        cstore: {
             bg: "bg-green-100",
             text: "text-green-800",
-            label: "Tunai",
+            label: "Tunai (CS Store)",
             icon: FaMoneyBillWave,
         },
     };
