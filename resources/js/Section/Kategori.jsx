@@ -17,31 +17,31 @@ const itemVariants = {
 
 const Kategori = ({ kategori, setFilter }) => {
     return (
-        <div className="py-8 px-4 sm:px-6 md:px-10 bg-gray-50">
+        <section className="py-12 px-6 md:px-10 lg:px-24 bg-gray-50">
             <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
                 Kategori
             </h2>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
                 {kategori.map((item, index) => (
                     <motion.div
                         key={index}
                         onClick={() => setFilter(item)}
-                        className="bg-white rounded-xl border border-gray-200 cursor-pointer flex items-center justify-center text-center p-6"
+                        className="bg-white rounded-xl border border-gray-200 cursor-pointer flex items-center justify-center text-center p-6 hover:shadow-lg transition"
                         variants={itemVariants}
                         initial="hidden"
                         whileInView="visible"
-                        viewport={{ once: true, amount: 0.3 }}
                         whileHover="hover"
+                        viewport={{ once: true, amount: 0.3 }}
                         transition={{ delay: index * 0.1 }}
                     >
-                        <h3 className="text-xl font-semibold text-blue-600">
+                        <h3 className="text-lg font-semibold text-blue-600">
                             {item}
                         </h3>
                     </motion.div>
                 ))}
             </div>
-        </div>
+        </section>
     );
 };
 

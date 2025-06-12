@@ -16,7 +16,7 @@ const MyCourse = ({ kursus }) => {
 
     return (
         <DashboardLayout>
-            <h1 className="text-3xl font-semibold mb-6 text-gray-800">
+            <h1 className="text-3xl font-semibold m-6 text-gray-800">
                 Kursus Saya
             </h1>
             <div className="overflow-x-auto rounded-lg shadow">

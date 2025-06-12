@@ -2,10 +2,10 @@ import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
-// import { Button } from "@/Components/ui/button"; // Jika Anda tidak menggunakan shadcn/ui Button ini bisa dihapus atau disesuaikan
+import { Button } from "@/Components/ui/button";
 import { Transition } from "@headlessui/react";
 import { Link, useForm, usePage } from "@inertiajs/react";
-import Swal from "sweetalert2"; // Pastikan Swal sudah diinstal dan diimpor
+import Swal from "sweetalert2";
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -14,16 +14,9 @@ export default function UpdateProfileInformation({
 }) {
     const user = usePage().props.auth.user;
 
-    const {
-        data,
-        setData,
-        post,
-        errors,
-        processing,
-        recentlySuccessful,
-    } = // <<< UBAH patch MENJADI post
+    const { data, setData, post, errors, processing, recentlySuccessful } =
         useForm({
-            _method: "patch", // <<< TAMBAHKAN INI
+            _method: "patch", // spoofing method PATCH via POST
             name: user.name,
             email: user.email,
             alamat: "",
@@ -33,35 +26,25 @@ export default function UpdateProfileInformation({
 
     const submit = (e) => {
         e.preventDefault();
-
-        // Menggunakan method 'post' dan field '_method: "patch"' untuk spoofing HTTP method
-        // Ini adalah cara yang benar untuk mengirim file dengan method PATCH/PUT di Laravel
         post(route("profile.update"), {
-            // <<< UBAH patch MENJADI post
-            onSuccess: () => {
+            onSuccess: () =>
                 Swal.fire(
                     "Berhasil!",
                     "Profil berhasil diperbarui.",
                     "success"
-                );
-            },
-            onError: (formErrors) => {
-                console.error(
-                    "Terjadi kesalahan saat memperbarui profil:",
-                    formErrors
-                );
+                ),
+            onError: () =>
                 Swal.fire(
                     "Gagal!",
                     "Gagal memperbarui profil. Silakan coba lagi.",
                     "error"
-                );
-            },
+                ),
             preserveScroll: true,
         });
     };
 
     return (
-        <section className={`bg-white p-6 shadow rounded-xl ${className}`}>
+        <section className={`bg-white px-6 shadow rounded-xl ${className}`}>
             <header className="mb-6">
                 <h2 className="text-xl font-semibold text-gray-800">
                     Informasi Profil
@@ -75,8 +58,7 @@ export default function UpdateProfileInformation({
                 {/* Foto Profil */}
                 <div>
                     <InputLabel htmlFor="foto" value="Foto Profil" />
-                    {/* Avatar Preview */}
-                    <div className="w-24 h-24 rounded-full overflow-hidden mb-2 border border-gray-200 flex items-center justify-center bg-gray-100">
+                    <div className="w-24 h-24 rounded-full overflow-hidden mb-2 border border-gray-300 flex items-center justify-center bg-gray-100">
                         <img
                             src={
                                 data.foto
@@ -92,14 +74,14 @@ export default function UpdateProfileInformation({
                     <input
                         type="file"
                         id="foto"
-                        // value={data.foto}
-                        className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                        accept="image/*"
+                        className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
                         onChange={(e) => setData("foto", e.target.files[0])}
                     />
-                    <InputError className="mt-2" message={errors.foto} />{" "}
+                    <InputError className="mt-2" message={errors.foto} />
                 </div>
 
-                {/* Name */}
+                {/* Nama */}
                 <div>
                     <InputLabel htmlFor="name" value="Nama Lengkap" />
                     <TextInput
@@ -128,7 +110,7 @@ export default function UpdateProfileInformation({
                     <InputError className="mt-2" message={errors.email} />
                 </div>
 
-                {/* Address */}
+                {/* Alamat */}
                 <div>
                     <InputLabel htmlFor="alamat" value="Alamat" />
                     <TextInput
@@ -138,10 +120,10 @@ export default function UpdateProfileInformation({
                         onChange={(e) => setData("alamat", e.target.value)}
                         placeholder="Masukkan alamat lengkap Anda"
                     />
-                    <InputError className="mt-2" message={errors.alamat} />{" "}
+                    <InputError className="mt-2" message={errors.alamat} />
                 </div>
 
-                {/* Phone */}
+                {/* Nomor Telepon */}
                 <div>
                     <InputLabel htmlFor="telepon" value="Nomor Telepon" />
                     <TextInput
@@ -152,12 +134,13 @@ export default function UpdateProfileInformation({
                         onChange={(e) => setData("telepon", e.target.value)}
                         placeholder="Contoh: 081234567890"
                     />
-                    <InputError className="mt-2" message={errors.telepon} />{" "}
+                    <InputError className="mt-2" message={errors.telepon} />
                 </div>
 
+                {/* Verifikasi Email */}
                 {mustVerifyEmail && user.email_verified_at === null && (
-                    <div>
-                        <p className="mt-2 text-sm text-gray-800">
+                    <div className="mt-4 text-sm text-gray-800">
+                        <p>
                             Email Anda belum terverifikasi.
                             <Link
                                 href={route("verification.send")}
@@ -169,7 +152,6 @@ export default function UpdateProfileInformation({
                                 verifikasi.
                             </Link>
                         </p>
-
                         {status === "verification-link-sent" && (
                             <div className="mt-2 text-sm font-medium text-green-600">
                                 Tautan verifikasi baru telah dikirim ke alamat
@@ -179,10 +161,9 @@ export default function UpdateProfileInformation({
                     </div>
                 )}
 
+                {/* Tombol Submit */}
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>
-                        Simpan Perubahan
-                    </PrimaryButton>
+                    <Button disabled={processing}>Simpan Perubahan</Button>
                     <Transition
                         show={recentlySuccessful}
                         enter="transition-opacity duration-300"
