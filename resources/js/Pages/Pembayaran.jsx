@@ -372,7 +372,6 @@ const Pembayaran = ({ pembayaran, event }) => {
                                 <thead className="bg-gray-50">
                                     <tr>
                                         <TableHeader>Transaksi</TableHeader>
-                                        <TableHeader>Peserta</TableHeader>
                                         <TableHeader>Kelas</TableHeader>
                                         <TableHeader>Jumlah</TableHeader>
                                         <TableHeader>Metode</TableHeader>
@@ -398,22 +397,7 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                         ID: {item.id}
                                                     </div>
                                                 </TableCell>
-                                                <TableCell>
-                                                    <div className="text-sm font-medium text-gray-900">
-                                                        {item.pendaftaran
-                                                            ?.peserta?.nama ||
-                                                            item.user?.name ||
-                                                            "N/A"}
-                                                    </div>
-                                                    <div className="text-xs text-gray-500">
-                                                        {item.pendaftaran
-                                                            ?.peserta?.email ||
-                                                            item.user?.email ||
-                                                            item.pendaftaran
-                                                                ?.email ||
-                                                            "N/A"}
-                                                    </div>
-                                                </TableCell>
+
                                                 <TableCell>
                                                     <div className="text-sm font-medium text-gray-900">
                                                         {item.kelas
