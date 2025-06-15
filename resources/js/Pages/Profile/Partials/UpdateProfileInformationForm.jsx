@@ -64,8 +64,8 @@ export default function UpdateProfileInformation({
                                 data.foto
                                     ? URL.createObjectURL(data.foto)
                                     : user.foto
-                                    ? `/storage/${user.foto}`
-                                    : "/default-avatar.png"
+                                        ? `/storage/${user.foto}`
+                                        : "/default-avatar.png"
                             }
                             alt="Foto Profil"
                             className="w-full h-full object-cover"
@@ -163,7 +163,7 @@ export default function UpdateProfileInformation({
 
                 {/* Tombol Submit */}
                 <div className="flex items-center gap-4">
-                    <Button disabled={processing}>Simpan Perubahan</Button>
+                    <Button disabled={processing} className="mb-3">Simpan Perubahan</Button>
                     <Transition
                         show={recentlySuccessful}
                         enter="transition-opacity duration-300"
@@ -171,7 +171,7 @@ export default function UpdateProfileInformation({
                         leave="transition-opacity duration-300"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-green-600">
+                        <p className="text-sm text-green-600 mb-3">
                             Profil berhasil diperbarui!
                         </p>
                     </Transition>

@@ -40,6 +40,7 @@ class HandleInertiaRequests extends Middleware
                 'midtrans_is_production' => config('midtrans.is_production'),
                 'midtrans_is_sanitized' => config('midtrans.is_sanitized'),
                 'midtrans_is_3ds' => config('midtrans.is_3ds'),
+                'app_name' => config('app.name'),
             ]
         ];
     }

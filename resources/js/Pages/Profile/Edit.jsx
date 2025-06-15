@@ -15,14 +15,14 @@ export default function Edit({ mustVerifyEmail, status }) {
 
             <div className="py-12">
                 {/* Profile & Password Update */}
-                <section className="bg-white p-6 shadow rounded-2xl">
+                <section className="bg-white p-6 shadow rounded-2xl mb-2">
                     <UpdateProfileInformationForm
                         mustVerifyEmail={mustVerifyEmail}
                         status={status}
                     />
                 </section>
 
-                <section className="bg-white p-6 shadow rounded-2xl">
+                <section className="bg-white p-6 shadow rounded-2xl mb-2">
                     <UpdatePasswordForm />
                 </section>
 

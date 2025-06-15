@@ -41,7 +41,7 @@ const EventSection = ({ kelas, filter, search }) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredKelas?.map((event, index) => (
                     <motion.div
-                        key={event.id}
+                        key={index}
                         className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300"
                         variants={cardVariants}
                         initial="hidden"
@@ -54,7 +54,7 @@ const EventSection = ({ kelas, filter, search }) => {
                             alt={event.nama_kelas}
                             className="w-full h-52 object-cover"
                         />
-                        <div className="p-6 flex flex-col justify-between h-[310px]">
+                        <div className="p-6 flex flex-col justify-between h-[310px] mb-3">
                             <div className="mb-4">
                                 <h3 className="text-xl font-bold text-blue-800 mb-2">
                                     {event.nama_kelas}
@@ -107,10 +107,9 @@ const EventSection = ({ kelas, filter, search }) => {
                             href={link.url ?? "#"}
                             dangerouslySetInnerHTML={{ __html: link.label }}
                             className={`px-4 py-2 rounded text-sm
-                                ${
-                                    link.active
-                                        ? "bg-blue-600 text-white"
-                                        : link.url
+                                ${link.active
+                                    ? "bg-blue-600 text-white"
+                                    : link.url
                                         ? "bg-white text-blue-600 border border-blue-400 hover:bg-blue-100"
                                         : "bg-gray-200 text-gray-500 cursor-not-allowed"
                                 }
