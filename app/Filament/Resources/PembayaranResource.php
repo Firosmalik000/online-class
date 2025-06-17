@@ -48,6 +48,9 @@ class PembayaranResource extends Resource
                         'pending' => 'warning',
                         'lunas' => 'success',
                         'belum' => 'danger',
+                        'gagal' => 'danger',
+                        'error' => 'danger',
+                        'expired' => 'danger',
                     ]),
                 Tables\Columns\TextColumn::make('total_harga')
                     ->label('Total Harga')

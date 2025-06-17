@@ -1,7 +1,9 @@
 import React from "react";
+import { usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 
 const Footer = () => {
+    const { env } = usePage().props;
     return (
         <motion.footer
             className="bg-gray-900 text-gray-200 pt-16 pb-8 px-6"
@@ -18,7 +20,7 @@ const Footer = () => {
                     transition={{ delay: 0.2, duration: 0.5 }}
                 >
                     <h2 className="text-2xl font-bold text-yellow-400 mb-4">
-                        Edu-cause
+                        {env.app_name}
                     </h2>
                     <p className="text-sm">
                         Kursus Sipil Indonesia adalah lembaga kursus terkemuka
@@ -119,7 +121,7 @@ const Footer = () => {
                 transition={{ delay: 1, duration: 0.5 }}
             >
                 <div className="flex flex-col md:flex-row justify-between items-center text-center text-sm gap-4">
-                    <p>© 2025 Kursus Sipil Indonesia. All Rights Reserved</p>
+                    <p>© 2025 {env.app_name}. All Rights Reserved</p>
                     <div className="flex flex-wrap justify-center gap-4">
                         <a href="#" className="hover:underline">
                             Terms of service
