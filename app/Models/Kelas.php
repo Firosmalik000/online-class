@@ -12,6 +12,7 @@ class Kelas extends Model
 
     protected $casts = [
         'kategori' => 'array',
+        'jadwal' => 'array',
     ];
 
     public function pengajar()

@@ -32,7 +32,28 @@ class KelasResource extends Resource
                     ->searchable()
                     ->required(),
                 Forms\Components\RichEditor::make('deskripsi')->columnSpan(2)->required(),
-                Forms\Components\DateTimePicker::make('jadwal')->required(),
+                Forms\Components\Repeater::make('jadwal')
+                    ->label('Jadwal')
+                    ->schema([
+                        Forms\Components\TextInput::make('tanggal')
+                            ->label('Tanggal')
+                            ->type('date')
+                            ->required(),
+                        Forms\Components\TextInput::make('waktu')
+                            ->label('Waktu')
+                            ->type('time')
+                            ->required(),
+                        Forms\Components\RichEditor::make('keterangan')
+                            ->label('Keterangan')
+                            ->columnSpan(2)
+                            ->required(),
+                    ])
+                    ->columns(2)
+                    ->collapsible()
+                    ->columnSpan(2)
+                    ->minItems(1)
+                    ->dehydrated(true)
+                    ->required(),
                 Forms\Components\TextInput::make('harga')
                     ->label('Harga')
                     ->mask(RawJs::make(<<<'JS'

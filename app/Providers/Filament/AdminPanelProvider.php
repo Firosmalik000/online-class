@@ -55,7 +55,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-                AdminMiddleware::class, // Tambahkan middleware kustom di sini
+                // AdminMiddleware::class, // Tambahkan middleware kustom di sini
             ]);
     }
 }

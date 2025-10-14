@@ -4,6 +4,7 @@ import WelcomeLayout from "@/Layouts/WelcomeLayout";
 import { FaUser } from "react-icons/fa";
 import { useForm } from "@inertiajs/react";
 import Swal from "sweetalert2";
+import { numberToCurrency } from "@/Helpers/converters";
 
 const Detail = ({ kelas }) => {
     const { data, post, processing, errors, reset } = useForm({
@@ -124,23 +125,37 @@ const Detail = ({ kelas }) => {
                         <form onSubmit={submit}>
                             <div className="border rounded-xl p-6 shadow-md">
                                 <h3 className="text-2xl font-bold text-right mb-6">
-                                    Rp{kelas.harga.toLocaleString("id-ID")},00
+                                    {numberToCurrency(kelas.harga)} 
                                 </h3>
 
                                 <div className="space-y-4 text-sm text-gray-700">
-                                    <div className="flex justify-between border-b pb-2">
-                                        <span className="font-medium">
-                                            Jadwal
-                                        </span>
-                                        <span>
-                                            {new Date(
-                                                kelas.jadwal
-                                            ).toLocaleDateString("id-ID", {
-                                                day: "numeric",
-                                                month: "long",
-                                                year: "numeric",
-                                            })}
-                                        </span>
+                                    <div className="flex flex-col border-b pb-2">
+                                        <div className="flex items-center mb-1 justify-between">
+                                            <span className="font-medium">
+                                                Sesi
+                                            </span>
+                                            <span>{kelas.jadwal.length}x</span>
+                                        </div>
+                                        {kelas.jadwal && kelas.jadwal.length > 0 ? (
+                                            <ul className="list-disc ml-5 space-y-1">
+                                                {kelas.jadwal.map((item, idx) => (
+                                                    <li key={idx}>
+                                                        {new Date(`${item.tanggal} ${item.waktu}`).toLocaleDateString(
+                                                            "id-ID",
+                                                            {
+                                                                day: "2-digit",
+                                                                month: "long",
+                                                                year: "numeric",
+                                                                hour: "2-digit",
+                                                                minute: "2-digit",
+                                                            }
+                                                        )}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            <span>Tidak ada jadwal</span>
+                                        )}
                                     </div>
                                     <div className="flex justify-between border-b pb-2">
                                         <span className="font-medium">
