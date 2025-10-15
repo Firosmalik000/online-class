@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "@inertiajs/react";
+import { numberToCurrency } from "@/Helpers/converters";
 
 const cardVariants = {
     hidden: { opacity: 0, scale: 0.95 },
@@ -30,12 +31,6 @@ const EventSection = ({ kelas, filter, search }) => {
             year: "numeric",
         });
 
-    const formatHarga = (harga) =>
-        harga.toLocaleString("id-ID", {
-            style: "currency",
-            currency: "IDR",
-        });
-
     return (
         <section className="py-6 bg-gradient-to-b from-white to-gray-100">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -60,7 +55,7 @@ const EventSection = ({ kelas, filter, search }) => {
                                     {event.nama_kelas}
                                 </h3>
                                 <div
-                                    className="text-gray-600 text-sm line-clamp-3"
+                                    className="text-gray-600 text-sm line-clamp-3 overflow-ellipsis"
                                     dangerouslySetInnerHTML={{
                                         __html: event.deskripsi,
                                     }}
@@ -69,15 +64,11 @@ const EventSection = ({ kelas, filter, search }) => {
 
                             <div className="text-sm text-gray-700 space-y-1">
                                 <p>
-                                    <strong>Jadwal:</strong>{" "}
-                                    {formatDate(event.jadwal)}
-                                </p>
-                                <p>
                                     <strong>Level:</strong> {event.level}
                                 </p>
                                 <p>
                                     <strong>Harga:</strong>{" "}
-                                    {formatHarga(event.harga)}
+                                    {numberToCurrency(event.harga)}
                                 </p>
                                 <p>
                                     <strong>Pengajar:</strong>{" "}

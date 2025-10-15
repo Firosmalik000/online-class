@@ -166,11 +166,13 @@ export default function WelcomeLayout({ children }) {
                                         </Dropdown.Trigger>
 
                                         <Dropdown.Content>
-                                            <Dropdown.Link
-                                                href={route("order.index")}
-                                            >
-                                                Dashboard
-                                            </Dropdown.Link>
+                                            {user && user.role === "admin" && (
+                                                <Dropdown.Link
+                                                    href={route("filament.admin.pages.dashboard")}
+                                                >
+                                                    Dashboard
+                                                </Dropdown.Link>
+                                            )}
                                             <Dropdown.Link
                                                 href={route("logout")}
                                                 method="post"

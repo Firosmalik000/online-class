@@ -1,17 +1,35 @@
 import DashboardLayout from "@/Layouts/DashboardLayout";
-import React from "react";
+import React, { useState } from "react";
 
 const MyCourse = ({ kursus }) => {
+    const [showModal, setShowModal] = useState(false);
+    const [jadwalList, setJadwalList] = useState([]);
+
     const formatDate = (dateString) => {
         if (!dateString) return "N/A";
         return new Date(dateString).toLocaleDateString("id-ID", {
             day: "numeric",
             month: "long",
             year: "numeric",
+        });
+    };
+
+    const formatTime = (dateString) => {
+        if (!dateString) return "N/A";
+        return new Date(dateString).toLocaleTimeString("id-ID", {
             hour: "2-digit",
             minute: "2-digit",
-            second: "2-digit",
         });
+    };
+
+    const openModal = (jadwal) => {
+        setJadwalList(jadwal || []);
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+        setJadwalList([]);
     };
 
     return (
@@ -26,6 +44,7 @@ const MyCourse = ({ kursus }) => {
                             <th className="py-3 px-5 text-left">No</th>
                             <th className="py-3 px-5 text-left">Nama Kelas</th>
                             <th className="py-3 px-5 text-left">Kategori</th>
+                            <th className="py-3 px-5 text-left">Sesi</th>
                             <th className="py-3 px-5 text-left">Jadwal</th>
                             <th className="py-3 px-5 text-left">Link</th>
                         </tr>
@@ -57,11 +76,23 @@ const MyCourse = ({ kursus }) => {
                                     </td>
                                     <td className="py-3 px-5">
                                         {item.pendaftaran?.kelas?.jadwal
-                                            ? formatDate(
-                                                  item.pendaftaran.kelas.jadwal
-                                              )
-                                            : "-"}
-                                    </td>{" "}
+                                            ? item.pendaftaran.kelas.jadwal.length
+                                            : 0}
+                                        <span className="ml-1 text-gray-400"> sesi</span>
+                                    </td>
+                                    <td className="py-3 px-5">
+                                        <button
+                                            onClick={() =>
+                                                openModal(
+                                                    item.pendaftaran?.kelas
+                                                        ?.jadwal
+                                                )
+                                            }
+                                            className="bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-medium px-4 py-2 rounded-lg shadow transition duration-200"
+                                        >
+                                            Lihat Jadwal
+                                        </button>
+                                    </td>
                                     <td className="py-3 px-5">
                                         {item.pendaftaran?.kelas?.link_zoom ? (
                                             <a
@@ -87,6 +118,46 @@ const MyCourse = ({ kursus }) => {
                     </tbody>
                 </table>
             </div>
+
+            {/* Modal Jadwal */}
+            {showModal && (
+                <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40">
+                    <div className="min-h-screen flex items-center justify-center p-4">
+                        <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative max-h-[80vh] overflow-y-auto">
+                            <h2 className="text-xl font-semibold mb-4">Jadwal Kelas</h2>
+                            <button
+                                onClick={closeModal}
+                                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                            >
+                                &times;
+                            </button>
+                            {jadwalList.length === 0 ? (
+                                <div className="text-gray-500 text-center">Belum ada jadwal.</div>
+                            ) : (
+                                <ul className="space-y-4">
+                                    {jadwalList.map((jadwal, idx) => (
+                                        <li key={idx} className="border p-3 rounded">
+                                            <div>
+                                                <span className="font-medium">Tanggal:</span>{" "}
+                                                {formatDate(jadwal.tanggal)}
+                                            </div>
+                                            <div>
+                                                <span className="font-medium">Waktu:</span>{" "}
+                                                {jadwal.waktu}
+                                            </div>
+                                            <div>
+                                                <span className="font-medium mb-2">Deskripsi:</span>{" "}
+                                                <br />
+                                                <span dangerouslySetInnerHTML={{ __html: jadwal.keterangan || "N/A" }} />
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </DashboardLayout>
     );
 };

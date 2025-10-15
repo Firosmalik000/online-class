@@ -27,4 +27,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Route::middleware('admin')->group(function () {
+//     Route::get('/admin', function () {
+//         return redirect()->route('filament.admin.resources');
+//     })->name('admin.dashboard');
+// });
 require __DIR__.'/auth.php';
