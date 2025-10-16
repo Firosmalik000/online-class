@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Components/ui/button";
 import {
     Sheet,
     SheetClose,
@@ -7,8 +7,8 @@ import {
     SheetHeader,
     SheetTitle,
     SheetTrigger,
-} from "@/components/ui/sheet";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+} from "@/Components/ui/sheet";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 
 export function SheetDetail({ title, item, trigger }) {
     const pendaftaran = item?.pendaftaran || {};
