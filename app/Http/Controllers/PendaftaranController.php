@@ -5,9 +5,9 @@ use App\Models\Pendaftaran;
 use App\Models\Kelas;
 use App\Models\Pembayaran;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Livewire\Features\SupportEvents\Event;
 use Inertia\Inertia;
-use DB;
 
 class PendaftaranController extends Controller
 {
@@ -49,6 +49,12 @@ class PendaftaranController extends Controller
             $pembayaran = Pembayaran::find($request->id);
             if($pembayaran){
                 $pembayaran->status = $request->status ?? null;
+                if($request->status == 'gagal'){
+                    $pendaftaran = Pendaftaran::findOrFail($pembayaran->id_pendaftaran);
+                    $pendaftaran->status = 'dibatalkan';
+                    $pendaftaran->save();
+                }
+
                 $pembayaran->metode = $request->metode ?? null;
                 $pembayaran->error = $request->error ?? null;
                 $pembayaran->save();
@@ -75,10 +81,10 @@ class PendaftaranController extends Controller
         DB::beginTransaction();
         try {
             $kelas = Kelas::find($id_kelas);
-   if (!$kelas) {
-                        DB::rollBack();
-                             return back()->withErrors(['message' => 'Kelas tidak ditemukan'], 404);
-                     }
+            if (!$kelas) {
+            DB::rollBack();
+                    return back()->withErrors(['message' => 'Kelas tidak ditemukan'], 404);
+            }
             $isExist = Pendaftaran::where('id_peserta', auth()->id())
                     ->where('id_kelas', $kelas->id_kelas)
                     ->first();
@@ -139,7 +145,7 @@ class PendaftaranController extends Controller
             ]);
         } catch (\Throwable $th) {
             DB::rollBack();
-             return back()->withErrors(['message' => 'Pendaftaran Gagal', 'success' => false, 'status' => 500, 'error' => $th->getMessage(), 'line' => $th->getLine(), 'file' => $th->getFile(), 'trace' => $th->getTrace()], 500);
+            return back()->withErrors(['message' => 'Pendaftaran Gagal', 'success' => false, 'status' => 500, 'error' => $th->getMessage(), 'line' => $th->getLine(), 'file' => $th->getFile(), 'trace' => $th->getTrace()], 500);
         }
     }
 }
