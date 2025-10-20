@@ -174,6 +174,11 @@ export default function WelcomeLayout({ children }) {
                                                 </Dropdown.Link>
                                             )}
                                             <Dropdown.Link
+                                                href={route("profile.edit")}
+                                            >
+                                                Profile
+                                            </Dropdown.Link>
+                                            <Dropdown.Link
                                                 href={route("logout")}
                                                 method="post"
                                                 as="button"
