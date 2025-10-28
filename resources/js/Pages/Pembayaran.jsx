@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
 import {
     FaEye,
     FaSearch,
@@ -11,12 +11,14 @@ import {
     FaCreditCard,
     FaMoneyBillAlt, // Mengganti FaMoneyBillWave dengan FaMoneyBillAlt (opsional, tergantung preferensi icon)
     FaWallet, // Untuk E-Wallet
-    FaBarcode, // Untuk QRIS
+    FaBarcode,
+    FaCalendarAlt, // Untuk QRIS
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import { SheetDetail } from "@/Components/SheetDetail"; // Asumsi komponen ini ada
+import ModalJadwal from "@/Components/ModalJadwal";
 
 // --- Komponen Pembantu ---
 
@@ -166,8 +168,10 @@ const Pembayaran = ({ pembayaran, event }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [methodFilter, setMethodFilter] = useState("all");
+    const [showModalJadwal, setShowModalJadwal] = useState(false);
+    const [selectedJadwal, setSelectedJadwal] = useState(null);
 
-    const { put, processing } = useForm();
+    const { post, put, processing } = useForm();
 
     const filteredData = useMemo(() => {
         return pembayaran.filter((item) => {
@@ -189,11 +193,11 @@ const Pembayaran = ({ pembayaran, event }) => {
             const matchesStatus =
                 statusFilter === "all" ||
                 (item?.status || "").toString().trim().toLowerCase() ===
-                    statusFilter;
+                statusFilter;
             const matchesMethod =
                 methodFilter === "all" ||
                 (item?.metode || "").toString().trim().toLowerCase() ===
-                    methodFilter;
+                methodFilter;
 
             return matchesSearch && matchesStatus && matchesMethod;
         });
@@ -260,6 +264,61 @@ const Pembayaran = ({ pembayaran, event }) => {
             ).length,
         [pembayaran]
     );
+
+    const cekAbsenKelas = (payload) => {
+        const presensis = payload?.pendaftaran?.peserta?.presensis || [];
+
+        const sudahAbsen = presensis.some(
+            (presensi) => presensi.id_kelas === payload?.pendaftaran?.id_kelas
+        );
+
+        if (sudahAbsen) {
+            Swal.fire({
+                icon: "info",
+                title: "Sudah Absen",
+                text: "Kamu sudah melakukan absensi untuk kelas ini.",
+            });
+        } else {
+            setShowModalJadwal(true);
+        }
+    };
+
+    const absensiKelas = async (jadwal, payload) => {
+        try {
+            const response = await router.post(
+                route("presensi.store"),
+                {
+                    id_kelas: payload?.pendaftaran?.kelas?.id_kelas,
+                    jadwal: jadwal,
+                },
+                {
+                    onSuccess: () => {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Berhasil!",
+                            text: "Absensi berhasil disimpan.",
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    },
+                    onError: (errors) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Gagal!",
+                            text: "Terjadi kesalahan saat menyimpan absensi.",
+                        });
+                    },
+                }
+            );
+        } catch (error) {
+            console.error(error);
+            Swal.fire({
+                icon: "error",
+                title: "Error!",
+                text: "Terjadi error tak terduga.",
+            });
+        }
+    };
 
     return (
         <DashboardLayout>
@@ -418,8 +477,8 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                 <TableCell className="font-bold text-gray-900">
                                                     {formatCurrency(
                                                         item.jumlah_bayar ||
-                                                            item.total_harga ||
-                                                            0
+                                                        item.total_harga ||
+                                                        0
                                                     )}
                                                 </TableCell>
                                                 <TableCell>
@@ -445,6 +504,24 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                 </TableCell>
                                                 <TableCell>
                                                     <div className="flex flex-wrap items-center gap-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => cekAbsenKelas(item)}
+                                                            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+                                                        >
+                                                            <FaCalendarAlt className="mr-1.5 h-3 w-3" />
+                                                            Pilih Jadwal
+                                                        </button>
+
+                                                        <ModalJadwal
+                                                            data={item?.pendaftaran?.kelas?.jadwal}
+                                                            show={showModalJadwal}
+                                                            onClose={() => setShowModalJadwal(false)}
+                                                            onSelect={(jadwal) => absensiKelas(jadwal, item)}
+                                                        />
+
+
+
                                                         <SheetDetail
                                                             title="Detail Order"
                                                             item={item}
@@ -464,25 +541,25 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                         {(item.status ===
                                                             "pending" ||
                                                             item.status ===
-                                                                "belum") && (
-                                                            <>
-                                                                <Link
-                                                                    href={route(
-                                                                        "order.detail",
-                                                                        item.id
-                                                                    )}
-                                                                    className="inline-flex items-center px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
-                                                                >
-                                                                    <FaEye
-                                                                        className="mr-1"
-                                                                        size={
-                                                                            10
-                                                                        }
-                                                                    />
-                                                                    BAYAR
-                                                                </Link>
-                                                            </>
-                                                        )}
+                                                            "belum") && (
+                                                                <>
+                                                                    <Link
+                                                                        href={route(
+                                                                            "order.detail",
+                                                                            item.id
+                                                                        )}
+                                                                        className="inline-flex items-center px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+                                                                    >
+                                                                        <FaEye
+                                                                            className="mr-1"
+                                                                            size={
+                                                                                10
+                                                                            }
+                                                                        />
+                                                                        BAYAR
+                                                                    </Link>
+                                                                </>
+                                                            )}
                                                     </div>
                                                 </TableCell>
                                             </tr>
@@ -534,6 +611,9 @@ const Pembayaran = ({ pembayaran, event }) => {
                     </div>
                 </div>
             </div>
+
+            x
+
         </DashboardLayout>
     );
 };
