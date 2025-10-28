@@ -12,7 +12,7 @@ use Inertia\Inertia;
 class PendaftaranController extends Controller
 {
     public function index(){
-        $pembayaran = Pembayaran::with('pendaftaran.kelas', 'pendaftaran.peserta')
+        $pembayaran = Pembayaran::with('pendaftaran.kelas', 'pendaftaran.peserta','pendaftaran.peserta.presensis')
         ->whereHas('pendaftaran', function ($query) {
             $query->where('id_peserta', auth()->id());
         })

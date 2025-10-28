@@ -8,7 +8,7 @@ class Kelas extends Model
 {
     protected $table = 'kelas';
     protected $primaryKey = 'id_kelas';
-    protected $fillable = ['id_kelas','id_pengajar', 'nama_kelas', 'deskripsi', 'jadwal', 'harga', 'level', 'link_zoom', 'kategori', 'banner'];
+    protected $fillable = ['id_kelas', 'id_pengajar', 'nama_kelas', 'deskripsi', 'jadwal', 'harga', 'level', 'link_zoom', 'kategori', 'banner'];
 
     protected $casts = [
         'kategori' => 'array',
@@ -19,4 +19,11 @@ class Kelas extends Model
     {
         return $this->belongsTo(Pengajar::class, 'id_pengajar');
     }
+
+    public function presensis()
+    {
+        return $this->hasMany(Presensi::class, 'id_kelas', 'id_kelas');
+    }
+
+    
 }
