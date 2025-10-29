@@ -168,8 +168,7 @@ const Pembayaran = ({ pembayaran, event }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [methodFilter, setMethodFilter] = useState("all");
-    const [showModalJadwal, setShowModalJadwal] = useState(false);
-    const [selectedJadwal, setSelectedJadwal] = useState(null);
+
 
     const { post, put, processing } = useForm();
 
@@ -265,60 +264,6 @@ const Pembayaran = ({ pembayaran, event }) => {
         [pembayaran]
     );
 
-    const cekAbsenKelas = (payload) => {
-        const presensis = payload?.pendaftaran?.peserta?.presensis || [];
-
-        const sudahAbsen = presensis.some(
-            (presensi) => presensi.id_kelas === payload?.pendaftaran?.id_kelas
-        );
-
-        if (sudahAbsen) {
-            Swal.fire({
-                icon: "info",
-                title: "Sudah Absen",
-                text: "Kamu sudah melakukan absensi untuk kelas ini.",
-            });
-        } else {
-            setShowModalJadwal(true);
-        }
-    };
-
-    const absensiKelas = async (jadwal, payload) => {
-        try {
-            const response = await router.post(
-                route("presensi.store"),
-                {
-                    id_kelas: payload?.pendaftaran?.kelas?.id_kelas,
-                    jadwal: jadwal,
-                },
-                {
-                    onSuccess: () => {
-                        Swal.fire({
-                            icon: "success",
-                            title: "Berhasil!",
-                            text: "Absensi berhasil disimpan.",
-                            timer: 1500,
-                            showConfirmButton: false,
-                        });
-                    },
-                    onError: (errors) => {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Gagal!",
-                            text: "Terjadi kesalahan saat menyimpan absensi.",
-                        });
-                    },
-                }
-            );
-        } catch (error) {
-            console.error(error);
-            Swal.fire({
-                icon: "error",
-                title: "Error!",
-                text: "Terjadi error tak terduga.",
-            });
-        }
-    };
 
     return (
         <DashboardLayout>
@@ -504,22 +449,7 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                 </TableCell>
                                                 <TableCell>
                                                     <div className="flex flex-wrap items-center gap-2">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => cekAbsenKelas(item)}
-                                                            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-                                                        >
-                                                            <FaCalendarAlt className="mr-1.5 h-3 w-3" />
-                                                            Pilih Jadwal
-                                                        </button>
-
-                                                        <ModalJadwal
-                                                            data={item?.pendaftaran?.kelas?.jadwal}
-                                                            show={showModalJadwal}
-                                                            onClose={() => setShowModalJadwal(false)}
-                                                            onSelect={(jadwal) => absensiKelas(jadwal, item)}
-                                                        />
-
+                                                       
 
 
                                                         <SheetDetail
