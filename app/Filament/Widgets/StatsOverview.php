@@ -17,7 +17,7 @@ class StatsOverview extends BaseWidget
             Stat::make('Pengajar', Pengajar::all()->count())->color('primary'),
             Stat::make('Peserta', Pengguna::where('role', 'peserta')->count())->color('warning'),
             Stat::make('Pegawai', Pengguna::where('role', 'pegawai')->count())->color('danger'),
-            Stat::make('Pendaftaran', Pendaftaran::all()->count())->color('success'),
+            Stat::make('Pendaftaran', Pendaftaran::where('status','<>','dibatalkan')->count())->color('success'),
         ];
     }
 }
