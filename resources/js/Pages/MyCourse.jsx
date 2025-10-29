@@ -1,9 +1,18 @@
+import ModalJadwal from "@/Components/ModalJadwal";
 import DashboardLayout from "@/Layouts/DashboardLayout";
+import { router, useForm } from "@inertiajs/react";
 import React, { useState } from "react";
+import { FaCalendarAlt } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const MyCourse = ({ kursus }) => {
     const [showModal, setShowModal] = useState(false);
     const [jadwalList, setJadwalList] = useState([]);
+    const [showModalJadwal, setShowModalJadwal] = useState(false);
+    const [selectedJadwal, setSelectedJadwal] = useState(null);
+
+    const { post, put, processing } = useForm();
+
 
     const formatDate = (dateString) => {
         if (!dateString) return "N/A";
@@ -30,6 +39,84 @@ const MyCourse = ({ kursus }) => {
     const closeModal = () => {
         setShowModal(false);
         setJadwalList([]);
+    };
+
+
+    const cekAbsenKelas = (payload) => {
+        const presensis = payload?.pendaftaran?.peserta?.presensis || [];
+
+        // Cari semua presensi untuk kelas ini
+        const daftarPresensi = presensis.filter(
+            (presensi) => presensi.id_kelas === payload?.pendaftaran?.id_kelas
+        );
+
+        if (daftarPresensi.length > 0) {
+            // Ambil presensi terakhir
+            const presensiTerakhir = daftarPresensi[daftarPresensi.length - 1];
+            const tanggalObj = new Date(
+                presensiTerakhir.jadwal?.tanggal + "T" + presensiTerakhir.jadwal?.waktu
+            );
+
+            const tanggal = tanggalObj.toLocaleDateString("id-ID", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+            });
+
+            const waktu = tanggalObj.toLocaleTimeString("id-ID", {
+                hour: "2-digit",
+                minute: "2-digit",
+            });
+            Swal.fire({
+                icon: "info",
+                title: "Sudah Memilih Jadwal",
+                html: `
+                <p style="margin-bottom: 6px;">Kamu sudah tidak bisa memilih jadwal lagi.</p>
+                <p><strong>Jadwal yang sudah kamu pilih:</strong><br>${tanggal} pukul ${waktu}</p>
+            `,
+            });
+        } else {
+            setShowModalJadwal(true);
+        }
+
+    };
+
+    const absensiKelas = async (jadwal, payload) => {
+        try {
+            const response = await router.post(
+                route("presensi.store"),
+                {
+                    id_kelas: payload?.pendaftaran?.kelas?.id_kelas,
+                    jadwal: jadwal,
+                },
+                {
+                    onSuccess: () => {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Berhasil!",
+                            text: "Absensi berhasil disimpan.",
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    },
+                    onError: (errors) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Gagal!",
+                            text: "Terjadi kesalahan saat menyimpan absensi.",
+                        });
+                    },
+                }
+            );
+        } catch (error) {
+            console.error(error);
+            Swal.fire({
+                icon: "error",
+                title: "Error!",
+                text: "Terjadi error tak terduga.",
+            });
+        }
     };
 
     return (
@@ -82,16 +169,21 @@ const MyCourse = ({ kursus }) => {
                                     </td>
                                     <td className="py-3 px-5">
                                         <button
-                                            onClick={() =>
-                                                openModal(
-                                                    item.pendaftaran?.kelas
-                                                        ?.jadwal
-                                                )
-                                            }
-                                            className="bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-medium px-4 py-2 rounded-lg shadow transition duration-200"
+                                            type="button"
+                                            onClick={() => cekAbsenKelas(item)}
+                                            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
                                         >
-                                            Lihat Jadwal
+                                            <FaCalendarAlt className="mr-1.5 h-3 w-3" />
+                                            Pilih Jadwal
                                         </button>
+
+                                        <ModalJadwal
+                                            data={item?.pendaftaran?.kelas?.jadwal}
+                                            show={showModalJadwal}
+                                            onClose={() => setShowModalJadwal(false)}
+                                            onSelect={(jadwal) => absensiKelas(jadwal, item)}
+                                        />
+
                                     </td>
                                     <td className="py-3 px-5">
                                         {item.pendaftaran?.kelas?.link_zoom ? (
