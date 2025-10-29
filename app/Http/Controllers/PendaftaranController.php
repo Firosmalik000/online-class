@@ -87,6 +87,7 @@ class PendaftaranController extends Controller
             }
             $isExist = Pendaftaran::where('id_peserta', auth()->id())
                     ->where('id_kelas', $kelas->id_kelas)
+                    ->where('status', '<>','dibatalkan')
                     ->first();
     
             if ($isExist) {
