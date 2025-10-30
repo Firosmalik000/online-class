@@ -47,17 +47,19 @@ class PresensiResource extends Resource
                 ->required(),
 
             // Jadwal absen
-            Forms\Components\Group::make()
-                ->label('Jadwal Absen')
+            Forms\Components\Repeater::make('jadwal')
+                ->label('Jadwal')
+                ->columnSpan(2)
                 ->schema([
-                    Forms\Components\DatePicker::make('jadwal.tanggal')
+                    Forms\Components\TextInput::make('tanggal')
                         ->label('Tanggal')
+                        ->type('date')
                         ->required(),
-
-                    Forms\Components\TimePicker::make('jadwal.waktu')
+                    Forms\Components\TextInput::make('waktu')
                         ->label('Waktu')
-                        ->required(),
-                ]),
+                        ->type('time')
+                        ->required()
+                ])
         ]);
     }
 
@@ -83,14 +85,6 @@ class PresensiResource extends Resource
                     ->label('Peserta')
                     ->sortable()
                     ->searchable(),
-
-                Tables\Columns\TextColumn::make('jadwal.tanggal')
-                    ->label('Tanggal')
-                    ->date()
-                    ->sortable(),
-
-                Tables\Columns\TextColumn::make('jadwal.waktu')
-                    ->label('Waktu'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('id_kelas')
