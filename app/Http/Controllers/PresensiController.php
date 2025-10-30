@@ -16,6 +16,18 @@ class PresensiController extends Controller
         try {
             $userId = Auth::user()->id_pengguna;
 
+            $jadwalObj = (array) $request->jadwal;
+
+            if (is_array($jadwalObj) && count($jadwalObj) > 0) {
+                // Gabungkan semua tanggal dan waktu menjadi satu string dipisahkan koma
+                $jadwalDate = collect($jadwalObj)
+                    ->map(fn($item) => $item['tanggal'] . ' ' . $item['waktu'])
+                    ->implode(', ');
+            } else {
+                return redirect()->back()->with('error', 'Harap pilih jadwal terlebih dahulu');
+            }
+
+
             $findPresensi = Presensi::where('id_kelas', $request->id_kelas)
                 ->where('id_peserta', $userId)
                 ->first();
@@ -24,12 +36,12 @@ class PresensiController extends Controller
                 Presensi::create([
                     'id_peserta' => $userId,
                     'id_kelas' => $request->id_kelas,
-                    'jadwal' => $request->jadwal,
+                    'jadwal' => $jadwalDate,
                     'is_absen' => true,
                 ]);
             } else {
                 $findPresensi->update([
-                    'jadwal' => $request->jadwal,
+                    'jadwal' => $jadwalDate,
                     'is_absen' => true,
                 ]);
             }
