@@ -20,6 +20,8 @@ class PresensiResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-clipboard';
     protected static ?string $navigationGroup = 'Kelas';
     protected static ?string $navigationLabel = 'Presensi Kelas';
+    protected static ?string $pluralModelLabel = 'Presensi Kelas';
+
 
     public static function form(Form $form): Form
     {
@@ -39,25 +41,51 @@ class PresensiResource extends Resource
                 ->searchable()
                 ->required(),
 
-            // Pilih peserta
             Forms\Components\Select::make('id_peserta')
                 ->label('Peserta')
-                ->options(Pengguna::where('role', 'peserta')->pluck('name', 'id_pengguna'))
+                ->options(function (callable $get) {
+                    $idKelas = $get('id_kelas');
+
+                    if (!$idKelas) {
+                        return [];
+                    }
+
+                    $sudahAda = \App\Models\Presensi::where('id_kelas', $idKelas)
+                        ->pluck('id_peserta');
+
+                    return \App\Models\Pengguna::where('role', 'peserta')
+                        ->whereNotIn('id_pengguna', $sudahAda)
+                        ->pluck('name', 'id_pengguna');
+                })
+                ->getOptionLabelUsing(
+                    fn($value) =>
+                    \App\Models\Pengguna::find($value)?->name 
+                )
                 ->searchable()
+                ->reactive()
                 ->required(),
 
-            // Jadwal absen
-            Forms\Components\Group::make()
-                ->label('Jadwal Absen')
+            Forms\Components\Repeater::make('jadwal')
+                ->label('Daftar Jadwal Absen')
                 ->schema([
-                    Forms\Components\DatePicker::make('jadwal.tanggal')
+                    Forms\Components\DatePicker::make('tanggal')
                         ->label('Tanggal')
                         ->required(),
 
-                    Forms\Components\TimePicker::make('jadwal.waktu')
+                    Forms\Components\TimePicker::make('waktu')
                         ->label('Waktu')
+                        ->withoutSeconds()
                         ->required(),
-                ]),
+
+                    Forms\Components\RichEditor::make('keterangan')
+                        ->label('Keterangan')
+                        ->toolbarButtons(['bold', 'italic', 'underline', 'bulletList'])
+                        ->columnSpanFull(),
+                ])
+                ->minItems(1)
+                ->grid(2)
+                ->collapsed()
+                ->required()
         ]);
     }
 
@@ -84,13 +112,20 @@ class PresensiResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('jadwal.tanggal')
-                    ->label('Tanggal')
-                    ->date()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('jumlah_jadwal')
+                    ->label('Jumlah Jadwal')
+                    ->badge()
+                    ->getStateUsing(function ($record) {
+                        $jadwalData = $record->jadwal;
 
-                Tables\Columns\TextColumn::make('jadwal.waktu')
-                    ->label('Waktu'),
+                        if (!is_array($jadwalData) || empty($jadwalData)) {
+                            return '0 Jadwal';
+                        }
+
+                        return count($jadwalData) . ' Jadwal';
+                    })
+                    ->color('success'),
+
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('id_kelas')
