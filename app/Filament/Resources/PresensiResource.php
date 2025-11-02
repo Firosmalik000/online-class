@@ -70,7 +70,7 @@ class PresensiResource extends Resource
                 ->schema([
                     Forms\Components\DatePicker::make('tanggal')
                         ->label('Tanggal')
-                        ->type('date')
+                        // ->type('date')
                         ->required(),
 
                     Forms\Components\TimePicker::make('waktu')
@@ -84,8 +84,8 @@ class PresensiResource extends Resource
                         ->columnSpanFull(),
                 ])
                 ->minItems(1)
-                ->grid(2)
-                ->collapsed()
+                ->grid()
+                // ->collapsed()
                 ->required()
         ]);
     }
