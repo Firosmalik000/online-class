@@ -15,4 +15,9 @@ class Pengguna extends Model
     {
         return $this->hasMany(Presensi::class, 'id_peserta', 'id_pengguna');
     }
+
+    public function nilai()
+    {
+        return $this->hasMany(Nilai::class, 'id_peserta', 'id_pengguna');
+    }
 }

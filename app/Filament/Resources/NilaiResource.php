@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\PresensiResource\Pages;
-use App\Models\Presensi;
+use App\Filament\Resources\NilaiResource\Pages;
+use App\Models\Nilai;
 use App\Models\Kelas;
 use App\Models\Pengguna;
 use Filament\Forms;
@@ -14,14 +14,15 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
-class PresensiResource extends Resource
+class NilaiResource extends Resource
 {
-    protected static ?string $model = Presensi::class;
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard';
-    protected static ?string $navigationGroup = 'Kelas';
-    protected static ?string $navigationLabel = 'Presensi Kelas';
-    protected static ?string $pluralModelLabel = 'Presensi Kelas';
+    protected static ?string $model = Nilai::class;
 
+    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
+    protected static ?string $navigationLabel = 'Nilai Peserta';
+    protected static ?string $navigationGroup = 'Akademik';
+    protected static ?string $modelLabel = 'Nilai Peserta';
+    protected static ?string $pluralModelLabel = 'Nilai Peserta';
 
     public static function form(Form $form): Form
     {
@@ -39,7 +40,8 @@ class PresensiResource extends Resource
                     return Kelas::pluck('nama_kelas', 'id_kelas');
                 })
                 ->searchable()
-                ->required(),
+                ->required()
+                ->reactive(),
 
             Forms\Components\Select::make('id_peserta')
                 ->label('Peserta')
@@ -50,43 +52,24 @@ class PresensiResource extends Resource
                         return [];
                     }
 
-                    $sudahAda = \App\Models\Presensi::where('id_kelas', $idKelas)
-                        ->pluck('id_peserta');
-
-                    return \App\Models\Pengguna::where('role', 'peserta')
+                    $sudahAda = Nilai::where('id_kelas', $idKelas)->pluck('id_peserta');
+                    return Pengguna::where('role', 'peserta')
                         ->whereNotIn('id_pengguna', $sudahAda)
                         ->pluck('name', 'id_pengguna');
                 })
                 ->getOptionLabelUsing(
                     fn($value) =>
-                    \App\Models\Pengguna::find($value)?->name 
+                    \App\Models\Pengguna::find($value)?->name
                 )
                 ->searchable()
-                ->reactive()
-                ->required(),
-
-            Forms\Components\Repeater::make('jadwal')
-                ->label('Daftar Jadwal Absen')
-                ->schema([
-                    Forms\Components\DatePicker::make('tanggal')
-                        ->label('Tanggal')
-                        ->type('date')
-                        ->required(),
-
-                    Forms\Components\TimePicker::make('waktu')
-                        ->label('Waktu')
-                        ->withoutSeconds()
-                        ->required(),
-
-                    Forms\Components\RichEditor::make('keterangan')
-                        ->label('Keterangan')
-                        ->toolbarButtons(['bold', 'italic', 'underline', 'bulletList'])
-                        ->columnSpanFull(),
-                ])
-                ->minItems(1)
-                ->grid(2)
-                ->collapsed()
                 ->required()
+                ->reactive(),
+            Forms\Components\TextInput::make('nilai')
+                ->label('Nilai')
+                ->numeric()
+                ->minValue(0)
+                ->maxValue(100)
+                ->required(),
         ]);
     }
 
@@ -113,20 +96,16 @@ class PresensiResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('jumlah_jadwal')
-                    ->label('Jumlah Jadwal')
+                Tables\Columns\TextColumn::make('nilai')
+                    ->label('Nilai')
+                    ->sortable()
                     ->badge()
-                    ->getStateUsing(function ($record) {
-                        $jadwalData = $record->jadwal;
-
-                        if (!is_array($jadwalData) || empty($jadwalData)) {
-                            return '0 Jadwal';
-                        }
-
-                        return count($jadwalData) . ' Jadwal';
-                    })
-                    ->color('success'),
-
+                    ->color(fn(int $state): string => match (true) {
+                        $state >= 90 => 'success',
+                        $state >= 75 => 'info',
+                        $state >= 60 => 'warning',
+                        default => 'danger',
+                    }),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('id_kelas')
@@ -139,15 +118,16 @@ class PresensiResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-            ]);
+            ])
+            ->defaultSort('id', 'desc');
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPresensis::route('/'),
-            'create' => Pages\CreatePresensi::route('/create'),
-            'edit' => Pages\EditPresensi::route('/{record}/edit'),
+            'index' => Pages\ListNilais::route('/'),
+            'create' => Pages\CreateNilai::route('/create'),
+            'edit' => Pages\EditNilai::route('/{record}/edit'),
         ];
     }
 }
