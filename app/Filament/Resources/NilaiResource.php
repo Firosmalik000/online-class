@@ -66,7 +66,7 @@ class NilaiResource extends Resource
                 ->reactive(),
             Forms\Components\TextInput::make('nilai')
                 ->label('Nilai')
-                ->numeric()
+                // ->numeric()
                 ->minValue(0)
                 ->maxValue(100)
                 ->required(),
