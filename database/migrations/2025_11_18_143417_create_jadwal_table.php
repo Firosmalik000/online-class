@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('presensi', function (Blueprint $table) {
+        Schema::create('jadwal', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_peserta');
             $table->foreignId('id_kelas');
-            $table->foreignId('id_jadwal');
-            $table->boolean('is_absen');
+            $table->date('tanggal');
+            $table->time('waktu');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('presensi');
+        Schema::dropIfExists('jadwal');
     }
 };

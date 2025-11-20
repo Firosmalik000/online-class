@@ -35,25 +35,35 @@ class KelasResource extends Resource
                 Forms\Components\Repeater::make('jadwal')
                     ->label('Jadwal')
                     ->schema([
-                        Forms\Components\TextInput::make('tanggal')
+                        Forms\Components\Hidden::make('id'),
+                        Forms\Components\DatePicker::make('tanggal')
                             ->label('Tanggal')
-                            ->type('date')
                             ->required(),
-                        Forms\Components\TextInput::make('waktu')
+
+                        Forms\Components\TimePicker::make('waktu')
                             ->label('Waktu')
-                            ->type('time')
+                            ->withoutSeconds()
                             ->required(),
-                        Forms\Components\RichEditor::make('keterangan')
-                            ->label('Keterangan')
-                            ->columnSpan(2)
-                            ->required(),
+
+                        Forms\Components\Repeater::make('materi')
+                            ->label('Materi')
+                            ->schema([
+                                Forms\Components\RichEditor::make('materi')
+                                    ->label('Materi')
+                                    ->required()
+                                    ->columnSpanFull(),
+                                Forms\Components\Hidden::make('id'),
+
+                            ])
+                            ->minItems(1)
+                            ->columns(1)
+                            ->columnSpanFull(), // supaya editor lebar penuh
                     ])
-                    ->columns(2)
-                    ->collapsible()
-                    ->columnSpan(2)
                     ->minItems(1)
-                    ->dehydrated(true)
-                    ->required(),
+                    ->columns(2)
+                    ->columnSpanFull()
+                    ->required()
+                    ->dehydrated(false),
                 Forms\Components\TextInput::make('harga')
                     ->label('Harga')
                     ->mask(RawJs::make(<<<'JS'
@@ -63,7 +73,7 @@ class KelasResource extends Resource
                         }
                     JS))
                     ->stripCharacters(['.', ',']) // optional
-                    ->dehydrateStateUsing(fn ($state) => (int) str_replace(['.', ','], '', $state))
+                    ->dehydrateStateUsing(fn($state) => (int) str_replace(['.', ','], '', $state))
                     ->numeric()
                     ->required(),
                 Forms\Components\Select::make('level')
@@ -96,7 +106,7 @@ class KelasResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('banner')->visibility('public')->default('https://placehold.co/600x400?text=User+Name'),
                 Tables\Columns\TextColumn::make('nama_kelas'),
-                Tables\Columns\TextColumn::make('pengajar_id')->getStateUsing(fn (Kelas $record): string => $record->pengajar->nama),
+                Tables\Columns\TextColumn::make('pengajar_id')->getStateUsing(fn(Kelas $record): string => $record->pengajar->nama),
                 Tables\Columns\TextColumn::make('harga')->money('IDR'),
             ])
             ->filters([

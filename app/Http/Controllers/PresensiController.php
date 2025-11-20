@@ -15,21 +15,15 @@ class PresensiController extends Controller
 
         try {
             $userId = Auth::user()->id_pengguna;
+            Presensi::where('id_peserta', $userId)
+                ->where('id_kelas', $request->id_kelas)
+                ->delete();
 
-            $findPresensi = Presensi::where('id_kelas', $request->id_kelas)
-                ->where('id_peserta', $userId)
-                ->first();
-
-            if (!$findPresensi) {
+            foreach ($request->id_jadwal as $jadwalId) {
                 Presensi::create([
                     'id_peserta' => $userId,
                     'id_kelas' => $request->id_kelas,
-                    'jadwal' => $request->jadwal,
-                    'is_absen' => true,
-                ]);
-            } else {
-                $findPresensi->update([
-                    'jadwal' => $request->jadwal,
+                    'id_jadwal' => $jadwalId,
                     'is_absen' => true,
                 ]);
             }

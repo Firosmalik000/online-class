@@ -11,6 +11,8 @@ const Detail = ({ kelas }) => {
         kelas_id: kelas.id_kelas,
     });
 
+
+
     const submit = (e) => {
         e.preventDefault();
 
@@ -50,6 +52,9 @@ const Detail = ({ kelas }) => {
             transition: { delay: customDelay, duration: 0.5, ease: "easeOut" },
         }),
     };
+
+
+
 
     return (
         <WelcomeLayout>
@@ -125,7 +130,7 @@ const Detail = ({ kelas }) => {
                         <form onSubmit={submit}>
                             <div className="border rounded-xl p-6 shadow-md">
                                 <h3 className="text-2xl font-bold text-right mb-6">
-                                    {numberToCurrency(kelas.harga)} 
+                                    {numberToCurrency(kelas.harga)}
                                 </h3>
 
                                 <div className="space-y-4 text-sm text-gray-700">
@@ -140,15 +145,31 @@ const Detail = ({ kelas }) => {
                                             <ul className="list-disc ml-5 space-y-1">
                                                 {kelas.jadwal.map((item, idx) => (
                                                     <li key={idx}>
-                                                        {new Date(`${item.tanggal} ${item.waktu}`).toLocaleDateString(
-                                                            "id-ID",
-                                                            {
-                                                                day: "2-digit",
-                                                                month: "long",
-                                                                year: "numeric",
-                                                                hour: "2-digit",
-                                                                minute: "2-digit",
-                                                            }
+                                                        <span className="font-semibold">
+                                                            {(() => {
+                                                                const dateOnly = item.tanggal.split("T")[0];
+                                                                const dateTime = new Date(`${dateOnly}T${item.waktu}`);
+
+                                                                return new Intl.DateTimeFormat("id-ID", {
+                                                                    day: "2-digit",
+                                                                    month: "long",
+                                                                    year: "numeric",
+                                                                    hour: "2-digit",
+                                                                    minute: "2-digit",
+                                                                }).format(dateTime);
+                                                            })()}
+                                                        </span>
+
+
+                                                        {item.materi && item.materi.length > 0 && (
+                                                            <ul className="ml-4 text-sm text-gray-600">
+                                                                {item.materi.map((m) => (
+                                                                    <li key={m.id}>
+                                                                        <span className="font-semibold">Materi:</span>
+                                                                        <div dangerouslySetInnerHTML={{ __html: m.materi.content }} />
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
                                                         )}
                                                     </li>
                                                 ))}

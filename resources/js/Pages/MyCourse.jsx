@@ -8,7 +8,9 @@ import Swal from "sweetalert2";
 const MyCourse = ({ kursus }) => {
     const [showModalJadwal, setShowModalJadwal] = useState(false);
     const [selectedKelas, setSelectedKelas] = useState(null);
-    const [modalMode, setModalMode] = useState("edit"); 
+    const [modalMode, setModalMode] = useState("edit");
+
+    console.log(kursus);
 
     const { post } = useForm();
 
@@ -35,13 +37,16 @@ const MyCourse = ({ kursus }) => {
         setShowModalJadwal(true);
     };
 
-    const absensiKelas = async (jadwals, payload) => {
+
+    const absensiKelas = async (jadwalsArray, payload) => {
+        const listIdJadwal = jadwalsArray.map(j => j.id);
+
         try {
             await router.post(
                 route("presensi.store"),
                 {
                     id_kelas: payload?.pendaftaran?.kelas?.id_kelas,
-                    jadwal: jadwals,
+                    id_jadwal: listIdJadwal,
                 },
                 {
                     onSuccess: () => {
@@ -169,8 +174,11 @@ const MyCourse = ({ kursus }) => {
                 data={selectedKelas?.pendaftaran?.kelas?.jadwal || []}
                 selected={
                     selectedKelas?.pendaftaran?.peserta?.presensis
-                        ?.find(p => p.id_kelas === selectedKelas?.pendaftaran?.id_kelas)
-                        ?.jadwal || []
+                        ?.filter(p => p.id_kelas === selectedKelas?.pendaftaran?.id_kelas)
+                        ?.map(p =>
+                            selectedKelas?.pendaftaran?.kelas?.jadwal?.find(j => j.id === p.id_jadwal)
+                        )
+                        ?.filter(Boolean) || []
                 }
                 onClose={() => setShowModalJadwal(false)}
                 onSelect={(jadwals) => {
