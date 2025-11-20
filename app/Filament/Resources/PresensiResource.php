@@ -70,6 +70,7 @@ class PresensiResource extends Resource
                 ->schema([
                     Forms\Components\DatePicker::make('tanggal')
                         ->label('Tanggal')
+                        ->type('date')
                         ->required(),
 
                     Forms\Components\TimePicker::make('waktu')
