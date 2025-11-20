@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { FaCalendarDay, FaClock } from "react-icons/fa";
 
-const ModalJadwal = ({ 
-    show, 
-    data = [], 
-    onClose, 
-    onSelect, 
+const ModalJadwal = ({
+    show,
+    data = [],
+    onClose,
+    onSelect,
     selected: selectedDefault = [],
-    mode = "edit" 
+    mode = "edit"
 }) => {
     const [selected, setSelected] = useState([]);
 
@@ -21,41 +21,49 @@ const ModalJadwal = ({
 
     if (!show) return null;
 
+
+    const isPast = (tanggalStr, waktuStr) => {
+        const dateOnly = tanggalStr.split("T")[0];
+        const dateTime = new Date(`${dateOnly}T${waktuStr}`);
+
+        return dateTime < new Date(); // TRUE jika waktu sudah lewat
+    };
+
+
+    // FIX INVALID DATE
     const formatTanggalIndo = (tanggalStr, waktuStr) => {
-        const tanggal = new Date(tanggalStr);
-        const formatted = new Intl.DateTimeFormat("id-ID", {
+        const dateOnly = tanggalStr.split("T")[0];
+        const dateTime = new Date(`${dateOnly}T${waktuStr}`);
+
+        return new Intl.DateTimeFormat("id-ID", {
             weekday: "long",
             day: "numeric",
             month: "long",
             year: "numeric",
-        }).format(tanggal);
-
-        return `${formatted} • ${waktuStr}`;
+            hour: "2-digit",
+            minute: "2-digit",
+        }).format(dateTime);
     };
 
     const isJadwalSelected = (jadwal) => {
-        return selected.some(
-            (s) => s.tanggal === jadwal.tanggal && s.waktu === jadwal.waktu
-        );
+        return selected.some((s) => s.id === jadwal.id);
     };
 
     const toggleSelect = (jadwal) => {
-        if (mode === "view") return; 
-        
+        if (mode === "view") return;
+
         setSelected((prev) => {
-            const isAlreadySelected = prev.some(
-                (s) => s.tanggal === jadwal.tanggal && s.waktu === jadwal.waktu
-            );
-            
-            if (isAlreadySelected) {
-                return prev.filter(
-                    (s) => !(s.tanggal === jadwal.tanggal && s.waktu === jadwal.waktu)
-                );
-            } else {
-                return [...prev, jadwal];
-            }
+            const exists = prev.some((s) => s.id === jadwal.id);
+            return exists
+                ? prev.filter((s) => s.id !== jadwal.id)
+                : [...prev, jadwal];
         });
     };
+
+    const listToRender = mode === "view" ? selectedDefault : data;
+
+
+
 
     return (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-40 flex items-center justify-center z-50 p-4">
@@ -64,85 +72,69 @@ const ModalJadwal = ({
                     <FaCalendarDay className="mr-2 text-indigo-600" />
                     {mode === "view" ? "Jadwal Saya" : "Pilih Jadwal"}
                 </h2>
-
                 <div className="space-y-3">
-                    {mode === "view" ? (
-                        selected.length > 0 ? (
-                            selected.map((j, index) => (
-                                <div
-                                    key={index}
-                                    className="border border-indigo-200 bg-indigo-50 rounded-lg px-4 py-3"
+                    {listToRender.length > 0 ? (
+                        listToRender.map((j) => {
+                            const isSelected = isJadwalSelected(j);
+                            const isExpired = isPast(j.tanggal, j.waktu);
+
+                            return (
+                                <label
+                                    key={j.id}
+                                    className={`
+                        flex items-center justify-between border rounded-lg px-4 py-3 transition
+                        ${isExpired
+                                            ? "bg-gray-200 border-gray-300 opacity-60 cursor-not-allowed"
+                                            : isSelected
+                                                ? "border-blue-500 bg-blue-50 cursor-pointer"
+                                                : "border-gray-200 hover:bg-gray-50 cursor-pointer"
+                                        }
+                    `}
+                                    onClick={() => !isExpired && toggleSelect(j)}
                                 >
-                                    <div className="flex items-start">
-                                        <div className="flex-shrink-0 mt-1">
-                                            <FaClock className="text-indigo-600 h-4 w-4" />
-                                        </div>
-                                        <div className="ml-3 flex-1">
-                                            <p className="text-sm font-medium text-gray-800">
-                                                {formatTanggalIndo(j.tanggal, j.waktu)}
-                                            </p>
-                                            <div
-                                                className="text-xs text-gray-600 mt-1"
-                                                dangerouslySetInnerHTML={{
-                                                    __html: j.keterangan,
-                                                }}
-                                            />
-                                        </div>
+                                    {/* label expired */}
+                                    {isExpired && (
+                                        <span className="text-xs text-red-600 font-semibold ml-2">
+                                            (Sudah lewat)
+                                        </span>
+                                    )}
+
+                                    {/* tanggal & materi */}
+                                    <div className="pr-3 max-w-[80%]">
+                                        <p className="text-sm font-medium text-gray-800 break-words">
+                                            {formatTanggalIndo(j.tanggal, j.waktu)}
+                                        </p>
+
+                                        {j.materi?.length > 0 && (
+                                            <div className="mt-1 space-y-1">
+                                                {j.materi.map((m) => (
+                                                    <div
+                                                        key={m.id}
+                                                        className="text-xs text-gray-600"
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: m.materi.content,
+                                                        }}
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="text-center py-8">
-                                <div className="text-gray-400 mb-2">
-                                    <FaCalendarDay className="h-12 w-12 mx-auto" />
-                                </div>
-                                <p className="text-sm text-gray-500">
-                                    Belum ada jadwal yang dipilih
-                                </p>
-                                <p className="text-xs text-gray-400 mt-1">
-                                    Klik tombol "Absen" untuk memilih jadwal
-                                </p>
-                            </div>
-                        )
+
+                                    {/* checkbox */}
+                                    <input
+                                        type="checkbox"
+                                        checked={isSelected}
+                                        disabled={isExpired || mode === "view"}
+                                        onChange={() => !isExpired && toggleSelect(j)}
+                                        className="text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                                    />
+                                </label>
+                            );
+                        })
                     ) : (
-                        data.length > 0 ? (
-                            data.map((j, index) => {
-                                const isSelected = isJadwalSelected(j);
-                                return (
-                                    <label
-                                        key={index}
-                                        className={`flex items-center justify-between border rounded-lg px-4 py-3 cursor-pointer transition ${
-                                            isSelected
-                                                ? "border-blue-500 bg-blue-50"
-                                                : "border-gray-200 hover:bg-gray-50"
-                                        }`}
-                                        onClick={() => toggleSelect(j)}
-                                    >
-                                        <div className="pr-3 max-w-[80%]">
-                                            <p className="text-sm font-medium text-gray-800 break-words">
-                                                {formatTanggalIndo(j.tanggal, j.waktu)}
-                                            </p>
-                                            <div
-                                                className="text-xs text-gray-500 break-words"
-                                                dangerouslySetInnerHTML={{
-                                                    __html: j.keterangan,
-                                                }}
-                                            />
-                                        </div>
-                                        <input
-                                            type="checkbox"
-                                            checked={isSelected}
-                                            onChange={() => toggleSelect(j)}
-                                            className="text-blue-600 focus:ring-blue-500 flex-shrink-0"
-                                        />
-                                    </label>
-                                );
-                            })
-                        ) : (
-                            <p className="text-sm text-gray-500 text-center py-4">
-                                Tidak ada jadwal tersedia
-                            </p>
-                        )
+                        <p className="text-sm text-gray-500 text-center py-4">
+                            Tidak ada jadwal tersedia
+                        </p>
                     )}
                 </div>
 
@@ -156,17 +148,14 @@ const ModalJadwal = ({
                     {mode === "edit" && (
                         <button
                             onClick={() => {
-                                if (selected.length > 0) {
-                                    onSelect(selected);
-                                    onClose();
-                                }
+                                onSelect(selected);
+                                onClose();
                             }}
                             disabled={selected.length === 0}
-                            className={`px-4 py-2 text-sm rounded-md text-white ${
-                                selected.length > 0
-                                    ? "bg-blue-600 hover:bg-blue-700"
-                                    : "bg-blue-300 cursor-not-allowed"
-                            }`}
+                            className={`px-4 py-2 text-sm rounded-md text-white ${selected.length > 0
+                                ? "bg-blue-600 hover:bg-blue-700"
+                                : "bg-blue-300 cursor-not-allowed"
+                                }`}
                         >
                             Simpan
                         </button>

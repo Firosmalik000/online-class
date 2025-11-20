@@ -12,7 +12,7 @@ class Kelas extends Model
 
     protected $casts = [
         'kategori' => 'array',
-        'jadwal' => 'array',
+        'id_jadwal' => 'array',
     ];
 
     public function pengajar()
@@ -30,5 +30,10 @@ class Kelas extends Model
     {
         return $this->hasMany(Nilai::class, 'id_kelas', 'id_kelas');
     }
-    
+
+
+    public function jadwal()
+    {
+        return $this->hasMany(Jadwal::class, 'id_kelas', 'id_kelas');
+    }
 }

@@ -11,12 +11,11 @@ class Presensi extends Model
     protected $fillable = [
         'id_peserta',
         'id_kelas',
-        'jadwal',
+        'id_jadwal',
         'is_absen'
     ];
 
     protected $casts = [
-        'jadwal' => 'array',
         'is_absen' => 'boolean',
     ];
 
@@ -27,5 +26,9 @@ class Presensi extends Model
     public function kelas()
     {
         return $this->belongsTo(Kelas::class, 'id_kelas', 'id_kelas');
+    }
+    public function jadwal()
+    {
+        return $this->belongsTo(Jadwal::class, 'id_jadwal', 'id');
     }
 }

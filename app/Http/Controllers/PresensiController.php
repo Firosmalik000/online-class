@@ -15,33 +15,15 @@ class PresensiController extends Controller
 
         try {
             $userId = Auth::user()->id_pengguna;
+            Presensi::where('id_peserta', $userId)
+                ->where('id_kelas', $request->id_kelas)
+                ->delete();
 
-            $jadwalObj = (array) $request->jadwal;
-
-            $filteredJadwal = collect($jadwalObj)
-                ->map(fn($item) => [
-                    'tanggal' => $item['tanggal'],
-                    'waktu' => $item['waktu'],
-                ])
-                ->values(); // reset index
-
-            $jadwalJson = $filteredJadwal->toJson();
-
-
-            $findPresensi = Presensi::where('id_kelas', $request->id_kelas)
-                ->where('id_peserta', $userId)
-                ->first();
-
-            if (!$findPresensi) {
+            foreach ($request->id_jadwal as $jadwalId) {
                 Presensi::create([
                     'id_peserta' => $userId,
                     'id_kelas' => $request->id_kelas,
-                    'jadwal' => $filteredJadwal,
-                    'is_absen' => true,
-                ]);
-            } else {
-                $findPresensi->update([
-                    'jadwal' => $filteredJadwal,
+                    'id_jadwal' => $jadwalId,
                     'is_absen' => true,
                 ]);
             }

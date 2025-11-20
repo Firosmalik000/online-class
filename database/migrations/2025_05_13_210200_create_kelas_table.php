@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('id_pengajar');
             $table->string('nama_kelas',100);
             $table->text('deskripsi');
-            $table->json('jadwal');
             $table->decimal('harga', 10, 2);
             $table->enum('level', ['dasar','menengah','lanjutan'])->default('dasar');
             $table->text('link_zoom');
