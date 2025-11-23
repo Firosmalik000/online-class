@@ -10,7 +10,7 @@ class DetailController extends Controller
 {
     public function index(Request $request, $id)
     {
-        $kelas = Kelas::with('pengajar')->where('id_kelas', $id)->first();
+        $kelas = Kelas::with('pengajar','jadwal.materi')->where('id_kelas', $id)->first();
 
         return Inertia::render('Detail', [
             'kelas' => $kelas,

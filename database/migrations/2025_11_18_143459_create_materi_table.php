@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('presensi', function (Blueprint $table) {
+        Schema::create('materi', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_peserta');
-            $table->foreignId('id_kelas');
             $table->foreignId('id_jadwal');
-            $table->boolean('is_absen');
+            $table->json('materi');
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('presensi');
+        Schema::dropIfExists('materi');
     }
 };
