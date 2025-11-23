@@ -12,29 +12,30 @@ const ModalJadwal = ({
     const [selected, setSelected] = useState([]);
 
     useEffect(() => {
-        if (show && Array.isArray(selectedDefault)) {
+        if (show) {
             setSelected(selectedDefault);
-        } else if (!show) {
+        } else {
             setSelected([]);
         }
     }, [show, selectedDefault]);
 
     if (!show) return null;
 
+    // tandai mana jadwal yg sudah absen
+    const listToRender = data.map(j => {
+        const sudahAbsen = selectedDefault.some(s => s?.id === j.id);
+        return { ...j, sudahAbsen };
+    });
 
     const isPast = (tanggalStr, waktuStr) => {
         const dateOnly = tanggalStr.split("T")[0];
         const dateTime = new Date(`${dateOnly}T${waktuStr}`);
-
-        return dateTime < new Date(); // TRUE jika waktu sudah lewat
+        return dateTime < new Date();
     };
 
-
-    // FIX INVALID DATE
     const formatTanggalIndo = (tanggalStr, waktuStr) => {
         const dateOnly = tanggalStr.split("T")[0];
         const dateTime = new Date(`${dateOnly}T${waktuStr}`);
-
         return new Intl.DateTimeFormat("id-ID", {
             weekday: "long",
             day: "numeric",
@@ -45,25 +46,19 @@ const ModalJadwal = ({
         }).format(dateTime);
     };
 
-    const isJadwalSelected = (jadwal) => {
-        return selected.some((s) => s.id === jadwal.id);
-    };
+    const isJadwalSelected = (j) => selected.some(s => s.id === j.id);
 
     const toggleSelect = (jadwal) => {
         if (mode === "view") return;
+        if (jadwal.sudahAbsen) return; // tidak bisa diubah
 
-        setSelected((prev) => {
-            const exists = prev.some((s) => s.id === jadwal.id);
+        setSelected(prev => {
+            const exists = prev.some(s => s.id === jadwal.id);
             return exists
-                ? prev.filter((s) => s.id !== jadwal.id)
+                ? prev.filter(s => s.id !== jadwal.id)
                 : [...prev, jadwal];
         });
     };
-
-    const listToRender = mode === "view" ? selectedDefault : data;
-
-
-
 
     return (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-40 flex items-center justify-center z-50 p-4">
@@ -72,70 +67,65 @@ const ModalJadwal = ({
                     <FaCalendarDay className="mr-2 text-indigo-600" />
                     {mode === "view" ? "Jadwal Saya" : "Pilih Jadwal"}
                 </h2>
-                <div className="space-y-3">
-                    {listToRender.length > 0 ? (
-                        listToRender.map((j) => {
-                            const isSelected = isJadwalSelected(j);
-                            const isExpired = isPast(j.tanggal, j.waktu);
 
-                            return (
-                                <label
-                                    key={j.id}
-                                    className={`
-                        flex items-center justify-between border rounded-lg px-4 py-3 transition
-                        ${isExpired
+                <div className="space-y-3">
+                    {listToRender.map(j => {
+                        const isSelected = isJadwalSelected(j);
+                        const isExpired = isPast(j.tanggal, j.waktu);
+
+                        return (
+                            <div
+                                key={j.id}
+                                className={`
+                                    flex items-center justify-between border rounded-lg px-4 py-3 transition
+                                    ${
+                                        j.sudahAbsen
+                                            ? "bg-green-100 border-green-400 cursor-not-allowed"
+                                            : isExpired
                                             ? "bg-gray-200 border-gray-300 opacity-60 cursor-not-allowed"
                                             : isSelected
-                                                ? "border-blue-500 bg-blue-50 cursor-pointer"
-                                                : "border-gray-200 hover:bg-gray-50 cursor-pointer"
-                                        }
-                    `}
-                                    onClick={() => !isExpired && toggleSelect(j)}
-                                >
-                                    {/* label expired */}
-                                    {isExpired && (
-                                        <span className="text-xs text-red-600 font-semibold ml-2">
-                                            (Sudah lewat)
-                                        </span>
+                                            ? "border-blue-500 bg-blue-50 cursor-pointer"
+                                            : "border-gray-200 hover:bg-gray-50 cursor-pointer"
+                                    }
+                                `}
+                                onClick={() => !isExpired && !j.sudahAbsen && toggleSelect(j)}
+                            >
+                                <div className="pr-3 max-w-[80%]">
+                                    <p className="text-sm font-medium text-gray-800 break-words">
+                                        {formatTanggalIndo(j.tanggal, j.waktu)}
+                                    </p>
+
+                                    {j.materi?.length > 0 && (
+                                        <div className="mt-1 space-y-1">
+                                            {j.materi.map((m) => (
+                                                <div
+                                                    key={m.id}
+                                                    className="text-xs text-gray-600"
+                                                    dangerouslySetInnerHTML={{ __html: m.materi.content }}
+                                                />
+                                            ))}
+                                        </div>
                                     )}
 
-                                    {/* tanggal & materi */}
-                                    <div className="pr-3 max-w-[80%]">
-                                        <p className="text-sm font-medium text-gray-800 break-words">
-                                            {formatTanggalIndo(j.tanggal, j.waktu)}
+                                    {j.sudahAbsen && (
+                                        <p className="text-xs text-green-700 font-semibold mt-1">
+                                            ✔ Sudah Absen
                                         </p>
+                                    )}
+                                </div>
 
-                                        {j.materi?.length > 0 && (
-                                            <div className="mt-1 space-y-1">
-                                                {j.materi.map((m) => (
-                                                    <div
-                                                        key={m.id}
-                                                        className="text-xs text-gray-600"
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: m.materi.content,
-                                                        }}
-                                                    />
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* checkbox */}
+                                {mode === "edit" && (
                                     <input
                                         type="checkbox"
                                         checked={isSelected}
-                                        disabled={isExpired || mode === "view"}
-                                        onChange={() => !isExpired && toggleSelect(j)}
-                                        className="text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                                        disabled={isExpired || j.sudahAbsen}
+                                        onChange={() => !isExpired && !j.sudahAbsen && toggleSelect(j)}
+                                        className="text-blue-600 flex-shrink-0"
                                     />
-                                </label>
-                            );
-                        })
-                    ) : (
-                        <p className="text-sm text-gray-500 text-center py-4">
-                            Tidak ada jadwal tersedia
-                        </p>
-                    )}
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
 
                 <div className="flex justify-end gap-2 mt-6 sticky bottom-0 bg-white pt-4">
@@ -145,17 +135,14 @@ const ModalJadwal = ({
                     >
                         {mode === "view" ? "Tutup" : "Batal"}
                     </button>
+
                     {mode === "edit" && (
                         <button
                             onClick={() => {
                                 onSelect(selected);
                                 onClose();
                             }}
-                            disabled={selected.length === 0}
-                            className={`px-4 py-2 text-sm rounded-md text-white ${selected.length > 0
-                                ? "bg-blue-600 hover:bg-blue-700"
-                                : "bg-blue-300 cursor-not-allowed"
-                                }`}
+                            className="px-4 py-2 text-sm rounded-md text-white bg-blue-600 hover:bg-blue-700"
                         >
                             Simpan
                         </button>
@@ -165,5 +152,6 @@ const ModalJadwal = ({
         </div>
     );
 };
+
 
 export default ModalJadwal;
