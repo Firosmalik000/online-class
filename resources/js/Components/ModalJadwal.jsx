@@ -7,7 +7,7 @@ const ModalJadwal = ({
     onClose,
     onSelect,
     selected: selectedDefault = [],
-    mode = "edit"
+    mode = "edit",
 }) => {
     const [selected, setSelected] = useState([]);
 
@@ -22,15 +22,28 @@ const ModalJadwal = ({
     if (!show) return null;
 
     // tandai mana jadwal yg sudah absen
-    const listToRender = data.map(j => {
-        const sudahAbsen = selectedDefault.some(s => s?.id === j.id);
+    const listToRender = data.map((j) => {
+        const sudahAbsen = selectedDefault.some((s) => s?.id === j.id);
         return { ...j, sudahAbsen };
     });
 
-    const isPast = (tanggalStr, waktuStr) => {
+    // const isPast = (tanggalStr, waktuStr) => {
+    //     const dateOnly = tanggalStr.split("T")[0];
+    //     const dateTime = new Date(`${dateOnly}T${waktuStr}`);
+    //     return dateTime < new Date();
+    // };
+
+    const isBeforeStart = (tanggalStr, waktuStr) => {
         const dateOnly = tanggalStr.split("T")[0];
-        const dateTime = new Date(`${dateOnly}T${waktuStr}`);
-        return dateTime < new Date();
+        const startTime = new Date(`${dateOnly}T${waktuStr}`);
+        return new Date() < startTime;
+    };
+
+    const isExpired = (tanggalStr, waktuStr) => {
+        const dateOnly = tanggalStr.split("T")[0];
+        const startTime = new Date(`${dateOnly}T${waktuStr}`);
+        const expiredTime = new Date(startTime.getTime() + 2 * 60 * 60 * 1000); // +2 jam
+        return new Date() > expiredTime;
     };
 
     const formatTanggalIndo = (tanggalStr, waktuStr) => {
@@ -46,16 +59,16 @@ const ModalJadwal = ({
         }).format(dateTime);
     };
 
-    const isJadwalSelected = (j) => selected.some(s => s.id === j.id);
+    const isJadwalSelected = (j) => selected.some((s) => s.id === j.id);
 
     const toggleSelect = (jadwal) => {
         if (mode === "view") return;
         if (jadwal.sudahAbsen) return; // tidak bisa diubah
 
-        setSelected(prev => {
-            const exists = prev.some(s => s.id === jadwal.id);
+        setSelected((prev) => {
+            const exists = prev.some((s) => s.id === jadwal.id);
             return exists
-                ? prev.filter(s => s.id !== jadwal.id)
+                ? prev.filter((s) => s.id !== jadwal.id)
                 : [...prev, jadwal];
         });
     };
@@ -69,26 +82,33 @@ const ModalJadwal = ({
                 </h2>
 
                 <div className="space-y-3">
-                    {listToRender.map(j => {
+                    {listToRender.map((j) => {
                         const isSelected = isJadwalSelected(j);
-                        const isExpired = isPast(j.tanggal, j.waktu);
+                        const expired = isExpired(j.tanggal, j.waktu);
+                        const beforeStart = isBeforeStart(j.tanggal, j.waktu);
 
                         return (
                             <div
                                 key={j.id}
                                 className={`
                                     flex items-center justify-between border rounded-lg px-4 py-3 transition
-                                    ${
-                                        j.sudahAbsen
-                                            ? "bg-green-100 border-green-400 cursor-not-allowed"
-                                            : isExpired
+                                    ${j.sudahAbsen
+                                        ? "bg-green-100 border-green-400 cursor-not-allowed"
+                                        : expired
                                             ? "bg-gray-200 border-gray-300 opacity-60 cursor-not-allowed"
-                                            : isSelected
-                                            ? "border-blue-500 bg-blue-50 cursor-pointer"
-                                            : "border-gray-200 hover:bg-gray-50 cursor-pointer"
+                                            : beforeStart
+                                                ? "bg-yellow-100 border-yellow-300 opacity-60 cursor-not-allowed"
+                                                : isSelected
+                                                    ? "border-blue-500 bg-blue-50 cursor-pointer"
+                                                    : "border-gray-200 hover:bg-gray-50 cursor-pointer"
                                     }
                                 `}
-                                onClick={() => !isExpired && !j.sudahAbsen && toggleSelect(j)}
+                                onClick={() =>
+                                    !expired &&
+                                    !j.sudahAbsen &&
+                                    !beforeStart &&
+                                    toggleSelect(j)
+                                }
                             >
                                 <div className="pr-3 max-w-[80%]">
                                     <p className="text-sm font-medium text-gray-800 break-words">
@@ -101,7 +121,10 @@ const ModalJadwal = ({
                                                 <div
                                                     key={m.id}
                                                     className="text-xs text-gray-600"
-                                                    dangerouslySetInnerHTML={{ __html: m.materi.content }}
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: m.materi
+                                                            .content,
+                                                    }}
                                                 />
                                             ))}
                                         </div>
@@ -112,14 +135,27 @@ const ModalJadwal = ({
                                             ✔ Sudah Absen
                                         </p>
                                     )}
+
+                                    {beforeStart && !j.sudahAbsen && (
+                                        <p className="text-xs text-yellow-700 font-semibold mt-1">
+                                            ⚠ Belum waktunya absen
+                                        </p>
+                                    )}
+
+                                    {expired && !j.sudahAbsen && (
+                                        <p className="text-xs text-red-700 font-semibold mt-1">
+                                            ✖ Waktu absen sudah habis
+                                        </p>
+                                    )}
                                 </div>
 
                                 {mode === "edit" && (
                                     <input
                                         type="checkbox"
                                         checked={isSelected}
-                                        disabled={isExpired || j.sudahAbsen}
-                                        onChange={() => !isExpired && !j.sudahAbsen && toggleSelect(j)}
+                                        disabled={expired || j.sudahAbsen}
+                                        onChange={() => !expired && !j.sudahAbsen && !beforeStart && toggleSelect(j)}
+
                                         className="text-blue-600 flex-shrink-0"
                                     />
                                 )}
@@ -152,6 +188,5 @@ const ModalJadwal = ({
         </div>
     );
 };
-
 
 export default ModalJadwal;
