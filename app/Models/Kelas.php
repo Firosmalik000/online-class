@@ -31,9 +31,13 @@ class Kelas extends Model
         return $this->hasMany(Nilai::class, 'id_kelas', 'id_kelas');
     }
 
-
     public function jadwal()
     {
         return $this->hasMany(Jadwal::class, 'id_kelas', 'id_kelas');
+    }
+
+    public function pendaftaran()
+    {
+        return $this->hasMany(Pendaftaran::class, 'id_kelas', 'id_kelas');
     }
 }
