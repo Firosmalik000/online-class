@@ -41,7 +41,11 @@ class HistoryResource extends Resource
 
                 Tables\Columns\TextColumn::make('pendaftaran_count')
                     ->label('Jumlah Kelas')
-                    ->counts('pendaftaran'),
+                    ->counts([
+                        'pendaftaran' => function ($query) {
+                            $query->where('status', '!=', 'dibatalkan');
+                        }
+                    ])
             ])
             ->filters([])
             ->actions([

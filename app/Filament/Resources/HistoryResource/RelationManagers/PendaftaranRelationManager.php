@@ -25,6 +25,9 @@ class PendaftaranRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(
+                fn($query) => $query->where('status', '!=', 'dibatalkan')
+            )
             ->columns([
                 Tables\Columns\TextColumn::make('kelas.nama_kelas')
                     ->label('Nama Kelas')
@@ -46,7 +49,7 @@ class PendaftaranRelationManager extends RelationManager
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Daftar')
-                    ->dateTime('d M Y H:i'),    
+                    ->dateTime('d M Y H:i'),
             ])
             ->headerActions([])
             ->actions([])
