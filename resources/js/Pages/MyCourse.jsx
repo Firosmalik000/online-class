@@ -10,8 +10,6 @@ const MyCourse = ({ kursus }) => {
     const [selectedKelas, setSelectedKelas] = useState(null);
     const [modalMode, setModalMode] = useState("edit");
 
-    console.log(kursus);
-
     const { post } = useForm();
 
     const formatTanggalIndo = (tanggalStr, waktuStr) => {
