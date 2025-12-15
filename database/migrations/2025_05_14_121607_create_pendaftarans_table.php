@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id('id_pendaftaran');
             $table->bigInteger('id_peserta');
             $table->bigInteger('id_kelas');
-            $table->enum('status', ['aktif', 'dibatalkan','selesai'])->default('aktif');
+            $table->enum('status', ['aktif', 'dibatalkan', 'selesai'])->default('aktif');
+            $table->dateTime('finished_at');
+
             $table->timestamps();
         });
     }
