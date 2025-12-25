@@ -22,19 +22,63 @@ const MyCourse = ({ kursus }) => {
         }).format(tanggal) + ` • ${waktuStr}`;
     };
 
+    // Fungsi untuk menentukan status kelas
+    const getStatusKelas = (item) => {
+        const pendaftaran = item.pendaftaran;
+        const kelas = pendaftaran?.kelas;
+
+        if (!kelas || !kelas.jadwal || kelas.jadwal.length === 0) {
+            return { label: "Tidak Ada Jadwal", class: "bg-gray-400 text-white" };
+        }
+
+        if (pendaftaran.status === 'selesai') {
+            return { label: "Selesai", class: "bg-green-500 text-white" };
+        }
+
+        if (pendaftaran.status === 'aktif') {
+            const now = new Date();
+            const jadwalSorted = [...kelas.jadwal].sort((a, b) => {
+                const dateA = new Date(`${a.tanggal}T${a.waktu}`);
+                const dateB = new Date(`${b.tanggal}T${b.waktu}`);
+                return dateA - dateB;
+            });
+
+            const jadwalPertama = jadwalSorted[0];
+            const jadwalTerakhir = jadwalSorted[jadwalSorted.length - 1];
+
+            const tanggalPertama = jadwalPertama.tanggal.split('T')[0];
+            const tanggalTerakhir = jadwalTerakhir.tanggal.split('T')[0];
+
+            const waktuMulaiPertama = new Date(`${tanggalPertama}T${jadwalPertama.waktu}`);
+            const waktuSelesaiTerakhir = new Date(`${tanggalTerakhir}T${jadwalTerakhir.waktu}`);
+
+            waktuSelesaiTerakhir.setHours(waktuSelesaiTerakhir.getHours() + 2);
+
+
+
+            if (now < waktuMulaiPertama) {
+                return { label: "Belum Mulai", class: "bg-yellow-500 text-white" };
+            } else if (now >= waktuMulaiPertama && now <= waktuSelesaiTerakhir) {
+                return { label: "Sedang Berlangsung", class: "bg-blue-500 text-white" };
+            } else {
+                return { label: "Selesai", class: "bg-green-500 text-white" };
+            }
+        }
+
+        return { label: pendaftaran.status || "Unknown", class: "bg-gray-400 text-white" };
+    };
+
     const openAbsenModal = (item) => {
         setSelectedKelas(item);
         setModalMode("edit");
         setShowModalJadwal(true);
     };
 
-    // Fungsi untuk buka modal lihat jadwal
     const openViewJadwalModal = (item) => {
         setSelectedKelas(item);
         setModalMode("view");
         setShowModalJadwal(true);
     };
-
 
     const absensiKelas = async (jadwalsArray, payload) => {
         const listIdJadwal = jadwalsArray.map(j => j.id);
@@ -88,6 +132,7 @@ const MyCourse = ({ kursus }) => {
                         <tr className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-sm uppercase tracking-wider">
                             <th className="py-3 px-5 text-left">No</th>
                             <th className="py-3 px-5 text-left">Nama Kelas</th>
+                            <th className="py-3 px-5 text-left">Status Kelas</th>
                             <th className="py-3 px-5 text-left">Kategori</th>
                             <th className="py-3 px-5 text-left">Sesi</th>
                             <th className="py-3 px-5 text-center">Jadwal</th>
@@ -105,62 +150,70 @@ const MyCourse = ({ kursus }) => {
                                 </td>
                             </tr>
                         ) : (
-                            kursus.map((item, index) => (
-                                <tr
-                                    key={item.id}
-                                    className="hover:bg-gray-50 transition duration-200 text-sm text-gray-700 border-b"
-                                >
-                                    <td className="py-3 px-5">{index + 1}</td>
-                                    <td className="py-3 px-5 font-medium">
-                                        {item.pendaftaran?.kelas?.nama_kelas || "-"}
-                                    </td>
-                                    <td className="py-3 px-5">
-                                        {item.pendaftaran?.kelas?.kategori || "-"}
-                                    </td>
-                                    <td className="py-3 px-5">
-                                        {item.pendaftaran?.kelas?.jadwal
-                                            ? item.pendaftaran.kelas.jadwal.length
-                                            : 0}
-                                        <span className="ml-1 text-gray-400">sesi</span>
-                                    </td>
-                                    <td className="py-3 px-5">
-                                        <div className="flex space-x-2 justify-center">
-                                            <button
-                                                type="button"
-                                                onClick={() => openAbsenModal(item)}
-                                                className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs leading-4 font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200"
-                                            >
-                                                <FaCheckCircle className="mr-1.5 h-3 w-3" />
-                                                Absen
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => openViewJadwalModal(item)}
-                                                className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-                                            >
-                                                <FaCalendarAlt className="mr-1.5 h-3 w-3" />
-                                                Jadwal Saya
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td className="py-3 px-5">
-                                        {item.pendaftaran?.kelas?.link_zoom ? (
-                                            <a
-                                                href={item.pendaftaran.kelas.link_zoom}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="inline-block bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium px-4 py-2 rounded-lg shadow transition duration-200"
-                                            >
-                                                Masuk Zoom
-                                            </a>
-                                        ) : (
-                                            <span className="text-gray-400 text-sm italic">
-                                                Belum tersedia
+                            kursus.map((item, index) => {
+                                const status = getStatusKelas(item);
+                                return (
+                                    <tr
+                                        key={item.id}
+                                        className="hover:bg-gray-50 transition duration-200 text-sm text-gray-700 border-b"
+                                    >
+                                        <td className="py-3 px-5">{index + 1}</td>
+                                        <td className="py-3 px-5 font-medium">
+                                            {item.pendaftaran?.kelas?.nama_kelas || "-"}
+                                        </td>
+                                        <td className="py-3 px-5">
+                                            <span className={`px-3 py-1 text-xs font-semibold rounded-full ${status.class}`}>
+                                                {status.label}
                                             </span>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))
+                                        </td>
+                                        <td className="py-3 px-5">
+                                            {item.pendaftaran?.kelas?.kategori || "-"}
+                                        </td>
+                                        <td className="py-3 px-5">
+                                            {item.pendaftaran?.kelas?.jadwal
+                                                ? item.pendaftaran.kelas.jadwal.length
+                                                : 0}
+                                            <span className="ml-1 text-gray-400">sesi</span>
+                                        </td>
+                                        <td className="py-3 px-5">
+                                            <div className="flex space-x-2 justify-center">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => openAbsenModal(item)}
+                                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs leading-4 font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200"
+                                                >
+                                                    <FaCheckCircle className="mr-1.5 h-3 w-3" />
+                                                    Absen
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => openViewJadwalModal(item)}
+                                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+                                                >
+                                                    <FaCalendarAlt className="mr-1.5 h-3 w-3" />
+                                                    Jadwal Saya
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td className="py-3 px-5">
+                                            {item.pendaftaran?.kelas?.link_zoom ? (
+                                                <a
+                                                    href={item.pendaftaran.kelas.link_zoom}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-block bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium px-4 py-2 rounded-lg shadow transition duration-200"
+                                                >
+                                                    Masuk Zoom
+                                                </a>
+                                            ) : (
+                                                <span className="text-gray-400 text-sm italic">
+                                                    Belum tersedia
+                                                </span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                );
+                            })
                         )}
                     </tbody>
                 </table>
