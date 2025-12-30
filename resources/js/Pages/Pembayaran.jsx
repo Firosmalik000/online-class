@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
 import {
     FaEye,
     FaSearch,
@@ -11,12 +11,14 @@ import {
     FaCreditCard,
     FaMoneyBillAlt, // Mengganti FaMoneyBillWave dengan FaMoneyBillAlt (opsional, tergantung preferensi icon)
     FaWallet, // Untuk E-Wallet
-    FaBarcode, // Untuk QRIS
+    FaBarcode,
+    FaCalendarAlt, // Untuk QRIS
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import { SheetDetail } from "@/Components/SheetDetail"; // Asumsi komponen ini ada
+import ModalJadwal from "@/Components/ModalJadwal";
 
 // --- Komponen Pembantu ---
 
@@ -167,7 +169,8 @@ const Pembayaran = ({ pembayaran, event }) => {
     const [statusFilter, setStatusFilter] = useState("all");
     const [methodFilter, setMethodFilter] = useState("all");
 
-    const { put, processing } = useForm();
+
+    const { post, put, processing } = useForm();
 
     const filteredData = useMemo(() => {
         return pembayaran.filter((item) => {
@@ -189,11 +192,11 @@ const Pembayaran = ({ pembayaran, event }) => {
             const matchesStatus =
                 statusFilter === "all" ||
                 (item?.status || "").toString().trim().toLowerCase() ===
-                    statusFilter;
+                statusFilter;
             const matchesMethod =
                 methodFilter === "all" ||
                 (item?.metode || "").toString().trim().toLowerCase() ===
-                    methodFilter;
+                methodFilter;
 
             return matchesSearch && matchesStatus && matchesMethod;
         });
@@ -260,6 +263,7 @@ const Pembayaran = ({ pembayaran, event }) => {
             ).length,
         [pembayaran]
     );
+
 
     return (
         <DashboardLayout>
@@ -418,8 +422,8 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                 <TableCell className="font-bold text-gray-900">
                                                     {formatCurrency(
                                                         item.jumlah_bayar ||
-                                                            item.total_harga ||
-                                                            0
+                                                        item.total_harga ||
+                                                        0
                                                     )}
                                                 </TableCell>
                                                 <TableCell>
@@ -445,6 +449,9 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                 </TableCell>
                                                 <TableCell>
                                                     <div className="flex flex-wrap items-center gap-2">
+                                                       
+
+
                                                         <SheetDetail
                                                             title="Detail Order"
                                                             item={item}
@@ -464,25 +471,25 @@ const Pembayaran = ({ pembayaran, event }) => {
                                                         {(item.status ===
                                                             "pending" ||
                                                             item.status ===
-                                                                "belum") && (
-                                                            <>
-                                                                <Link
-                                                                    href={route(
-                                                                        "order.detail",
-                                                                        item.id
-                                                                    )}
-                                                                    className="inline-flex items-center px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
-                                                                >
-                                                                    <FaEye
-                                                                        className="mr-1"
-                                                                        size={
-                                                                            10
-                                                                        }
-                                                                    />
-                                                                    BAYAR
-                                                                </Link>
-                                                            </>
-                                                        )}
+                                                            "belum") && (
+                                                                <>
+                                                                    <Link
+                                                                        href={route(
+                                                                            "order.detail",
+                                                                            item.id
+                                                                        )}
+                                                                        className="inline-flex items-center px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+                                                                    >
+                                                                        <FaEye
+                                                                            className="mr-1"
+                                                                            size={
+                                                                                10
+                                                                            }
+                                                                        />
+                                                                        BAYAR
+                                                                    </Link>
+                                                                </>
+                                                            )}
                                                     </div>
                                                 </TableCell>
                                             </tr>
@@ -534,6 +541,9 @@ const Pembayaran = ({ pembayaran, event }) => {
                     </div>
                 </div>
             </div>
+
+            x
+
         </DashboardLayout>
     );
 };

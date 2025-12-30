@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pendaftaran', function (Blueprint $table) {
-            $table->id('id_pendaftaran');
-            $table->bigInteger('id_peserta');
-            $table->bigInteger('id_kelas');
-            $table->enum('status', ['aktif', 'dibatalkan', 'selesai'])->default('aktif');
-            $table->dateTime('finished_at');
-
+        Schema::create('jadwal', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('id_kelas');
+            $table->date('tanggal');
+            $table->time('waktu');
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pendaftarans');
+        Schema::dropIfExists('jadwal');
     }
 };

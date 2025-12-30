@@ -12,7 +12,7 @@ use Inertia\Inertia;
 class PendaftaranController extends Controller
 {
     public function index(){
-        $pembayaran = Pembayaran::with('pendaftaran.kelas', 'pendaftaran.peserta')
+        $pembayaran = Pembayaran::with('pendaftaran.kelas', 'pendaftaran.peserta','pendaftaran.peserta.presensis')
         ->whereHas('pendaftaran', function ($query) {
             $query->where('id_peserta', auth()->id());
         })
@@ -23,7 +23,7 @@ class PendaftaranController extends Controller
         ]);
     }
     public function myCourse(){
-        $pembayaran = Pembayaran::with('pendaftaran.kelas', 'pendaftaran.peserta')
+        $pembayaran = Pembayaran::with('pendaftaran.kelas', 'pendaftaran.peserta','pendaftaran.peserta.presensis', 'pendaftaran.kelas.jadwal.materi')
         ->whereHas('pendaftaran', function ($query) {
             $query->where('id_peserta', auth()->id());
         })
@@ -87,6 +87,7 @@ class PendaftaranController extends Controller
             }
             $isExist = Pendaftaran::where('id_peserta', auth()->id())
                     ->where('id_kelas', $kelas->id_kelas)
+                    ->where('status', '<>','dibatalkan')
                     ->first();
     
             if ($isExist) {
@@ -143,7 +144,8 @@ class PendaftaranController extends Controller
                 'snapToken' => $snapToken,
                 'messsage' => 'Pendaftaran Berhasil'
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
+            // dd($th);
             DB::rollBack();
             return back()->withErrors(['message' => 'Pendaftaran Gagal', 'success' => false, 'status' => 500, 'error' => $th->getMessage(), 'line' => $th->getLine(), 'file' => $th->getFile(), 'trace' => $th->getTrace()], 500);
         }
