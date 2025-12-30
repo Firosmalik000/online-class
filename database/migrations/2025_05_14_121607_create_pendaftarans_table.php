@@ -16,7 +16,7 @@ return new class extends Migration
             $table->bigInteger('id_peserta');
             $table->bigInteger('id_kelas');
             $table->enum('status', ['aktif', 'dibatalkan', 'selesai'])->default('aktif');
-            $table->dateTime('finished_at');
+            $table->dateTime('finished_at')->nullable();
 
             $table->timestamps();
         });

@@ -145,7 +145,7 @@ class PendaftaranController extends Controller
                 'messsage' => 'Pendaftaran Berhasil'
             ]);
         } catch (\Exception $th) {
-            // dd($th);
+            dd($th);
             DB::rollBack();
             return back()->withErrors(['message' => 'Pendaftaran Gagal', 'success' => false, 'status' => 500, 'error' => $th->getMessage(), 'line' => $th->getLine(), 'file' => $th->getFile(), 'trace' => $th->getTrace()], 500);
         }
