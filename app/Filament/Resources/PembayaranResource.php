@@ -71,7 +71,8 @@ class PembayaranResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->searchPlaceholder('Cari nama peserta atau kelas...');
     }
 
     public static function getRelations(): array

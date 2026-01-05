@@ -10,6 +10,8 @@ class ListHistories extends ListRecords
 {
     protected static string $resource = HistoryResource::class;
 
+    protected ?string $heading = 'Riwayat Pendaftaran';
+
     protected function getHeaderActions(): array
     {
         return [

@@ -4,16 +4,30 @@ namespace App\Filament\Resources\KelasResource\Pages;
 
 use App\Filament\Resources\KelasResource;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\EditRecord;
 
 class EditKelas extends EditRecord
 {
     protected static string $resource = KelasResource::class;
 
+    protected static ?string $title = 'Edit Kelas';
+
+    protected function getSaveFormAction(): \Filament\Actions\Action
+    {
+        return parent::getSaveFormAction()
+            ->label('Simpan Perubahan');
+    }
+
+    protected function getCancelFormAction(): Action
+    {
+        return parent::getCancelFormAction()->label('Batal');
+    }
+
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()->label('Hapus Kelas'),
         ];
     }
 

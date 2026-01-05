@@ -18,7 +18,7 @@ class HistoryResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-clock';
     protected static ?string $navigationGroup = 'Akademik';
     protected static ?string $modelLabel = 'Riwayat Pendaftaran';
-    protected static ?string $pluralModelLabel = 'History Pendaftaran';
+    protected static ?string $pluralModelLabel = 'Riwayat Pendaftaran';
     public static ?string $recordRouteKeyName = 'id_pengguna';
 
     public static function form(Form $form): Form
@@ -50,7 +50,8 @@ class HistoryResource extends Resource
             ->filters([])
             ->actions([
                 Tables\Actions\ViewAction::make()->label('Detail'),
-            ]);
+            ])
+            ->searchPlaceholder('Cari nama peserta...');
     }
 
     public static function getRelations(): array

@@ -21,6 +21,9 @@ class KelasResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-academic-cap';
 
+    protected static string $createButtonLabel = 'Kelas Baru';
+
+
     public static function form(Form $form): Form
     {
         return $form
@@ -57,13 +60,15 @@ class KelasResource extends Resource
                             ])
                             ->minItems(1)
                             ->columns(1)
-                            ->columnSpanFull(), // supaya editor lebar penuh
+                            ->columnSpanFull()
+                            ->addActionLabel('Tambah Materi'),
                     ])
                     ->minItems(1)
                     ->columns(2)
                     ->columnSpanFull()
                     ->required()
-                    ->dehydrated(false),
+                    ->dehydrated(false)
+                    ->addActionLabel('Tambah Jadwal'),
                 Forms\Components\TextInput::make('harga')
                     ->label('Harga')
                     ->mask(RawJs::make(<<<'JS'

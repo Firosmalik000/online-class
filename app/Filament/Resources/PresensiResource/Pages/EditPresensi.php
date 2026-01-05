@@ -3,61 +3,66 @@
 namespace App\Filament\Resources\PresensiResource\Pages;
 
 use App\Filament\Resources\PresensiResource;
-use App\Models\Jadwal;
 use App\Models\Presensi;
+use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditPresensi extends EditRecord
 {
     protected static string $resource = PresensiResource::class;
-
     
+    protected static ?string $title = 'Edit Presensi';
+
+    protected function getSaveFormAction(): \Filament\Actions\Action
+    {
+        return parent::getSaveFormAction()
+            ->label('Simpan Perubahan');
+    }
+
+    protected function getCancelFormAction(): \Filament\Actions\Action
+    {
+        return parent::getCancelFormAction()
+            ->label('Batal');
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\DeleteAction::make()->label('Hapus'),
+        ];
+    }
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $jadwals = Jadwal::where('id_kelas', $data['id_kelas'])->get();
+        // Ambil semua presensi berdasarkan id_kelas & id_peserta
+        $presensiList = Presensi::where('id_kelas', $data['id_kelas'])
+            ->where('id_peserta', $data['id_peserta'])
+            ->with('jadwal')
+            ->get();
 
-        $data['jadwal_list'] = $jadwals->map(function ($j) use ($data) {
-            $presensi = Presensi::where('id_kelas', $data['id_kelas'])
-                ->where('id_peserta', $data['id_peserta'])
-                ->where('id_jadwal', $j->id)
-                ->first();
-
+        $data['jadwal_list'] = $presensiList->map(function ($presensi) {
             return [
-                'id_jadwal' => $j->id,
-                'tanggal'   => $j->tanggal->format('Y-m-d'),
-                'waktu'     => $j->waktu->format('H:i'),
-                'is_absen'  => $presensi?->is_absen ?? false,
+                'id' => $presensi->id,
+                'tanggal' => $presensi->jadwal->tanggal->format('d-m-Y'),
+                'waktu' => $presensi->jadwal->waktu->format('H:i'),
+                'is_absen' => $presensi->is_absen,
             ];
         })->toArray();
 
         return $data;
     }
 
-    protected function mutateFormDataBeforeSave(array $data): array
+    protected function afterSave(): void
     {
-        foreach ($data['jadwal_list'] as $item) {
+        $jadwalList = $this->data['jadwal_list'] ?? [];
 
-            if ($item['is_absen']) {
-                // Jika absen TRUE → simpan atau update
-                Presensi::updateOrCreate(
-                    [
-                        'id_kelas'   => $data['id_kelas'],
-                        'id_peserta' => $data['id_peserta'],
-                        'id_jadwal'  => $item['id_jadwal'],
-                    ],
-                    ['is_absen' => true]
-                );
-            } else {
-                // Jika absen FALSE → hapus
-                Presensi::where('id_kelas', $data['id_kelas'])
-                    ->where('id_peserta', $data['id_peserta'])
-                    ->where('id_jadwal', $item['id_jadwal'])
-                    ->delete();
+        foreach ($jadwalList as $jadwalData) {
+            if (isset($jadwalData['id'])) {
+                Presensi::where('id', $jadwalData['id'])
+                    ->update([
+                        'is_absen' => $jadwalData['is_absen'] ?? false,
+                    ]);
             }
         }
-
-        unset($data['jadwal_list']);
-        return $data;
     }
 }

@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PendaftaranResource\Pages;
 use App\Filament\Resources\PendaftaranResource\RelationManagers;
 use App\Models\Pendaftaran;
+use App\Models\Kelas;
+use App\Models\Pengguna;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -25,7 +27,33 @@ class PendaftaranResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Select::make('id_peserta')
+                    ->label('Peserta')
+                    ->options(Pengguna::where('role', 'peserta')->pluck('name', 'id_pengguna'))
+                    ->required()
+                    ->searchable()
+                    ->preload(),
+
+                Forms\Components\Select::make('id_kelas')
+                    ->label('Kelas')
+                    ->options(Kelas::pluck('nama_kelas', 'id_kelas'))
+                    ->required()
+                    ->searchable()
+                    ->preload(),
+
+                Forms\Components\Select::make('status')
+                    ->label('Status')
+                    ->options([
+                        'aktif' => 'aktif',
+                        'selesai' => 'selesai',
+                        'dibatalkan' => 'Dibatalkan',
+                    ])
+                    ->default('aktif')
+                    ->required(),
+
+                Forms\Components\DateTimePicker::make('finished_at')
+                    ->label('Tanggal Selesai')
+                    ->nullable(),
             ]);
     }
 
@@ -39,32 +67,48 @@ class PendaftaranResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id_peserta')
-                    ->getStateUsing(fn ($record) => $record->peserta->name ?? 'Tidak Diketahui')
+                Tables\Columns\TextColumn::make('peserta.name')
                     ->label('Nama Pendaftar')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('Kelas')
-                    ->getStateUsing(fn ($record) => $record->kelas->nama_kelas ?? 'Tidak Diketahui')
+                Tables\Columns\TextColumn::make('kelas.nama_kelas')
                     ->label('Kelas')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\BadgeColumn::make('status')
+                    ->label('Status')
+                    ->colors([
+                        'warning' => 'pending',
+                        'success' => 'approved',
+                        'danger' => 'rejected',
+                        'secondary' => 'dibatalkan',
+                    ])
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'pending' => 'Pending',
+                        'approved' => 'Disetujui',
+                        'rejected' => 'Ditolak',
+                        'dibatalkan' => 'Dibatalkan',
+                        default => $state,
+                    })
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Pendaftaran')
-                    ->dateTime()
+                    ->dateTime('d M Y H:i')
                     ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                // Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->label('Edit'),
+                Tables\Actions\DeleteAction::make()->label('Hapus'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->label('Hapus'),
                 ]),
-            ]);
+            ])
+            ->searchPlaceholder('Cari nama pendaftar atau kelas...');
     }
 
     public static function getRelations(): array
