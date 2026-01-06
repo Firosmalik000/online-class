@@ -11,6 +11,8 @@ class ViewHistory extends ViewRecord
 {
     protected static string $resource = HistoryResource::class;
 
+    protected ?string $heading = 'Detail Riwayat Pendaftaran';
+
     protected function getRelations(): array
     {
         return HistoryResource::getRelations();

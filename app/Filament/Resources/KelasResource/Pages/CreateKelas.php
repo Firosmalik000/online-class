@@ -10,6 +10,26 @@ class CreateKelas extends CreateRecord
 {
     protected static string $resource = KelasResource::class;
 
+    protected static ?string $title = 'Buat Kelas Baru';
+
+    protected function getCreateFormAction(): \Filament\Actions\Action
+    {
+        return parent::getCreateFormAction()
+            ->label('Simpan Kelas');
+    }
+
+    protected function getCreateAnotherFormAction(): \Filament\Actions\Action
+    {
+        return parent::getCreateAnotherFormAction()
+            ->label('Simpan & Buat Lagi');
+    }
+    protected function getCancelFormAction(): \Filament\Actions\Action
+    {
+        return parent::getCancelFormAction()->label('Batal');
+    }
+
+
+
     protected function afterCreate(): void
     {
         $jadwalList = $this->data['jadwal'];

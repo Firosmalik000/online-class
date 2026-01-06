@@ -21,7 +21,7 @@ class PengajarResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationGroup = 'Users';
+    protected static ?string $navigationGroup = 'Manajemen Pengguna';
 
     public static function form(Form $form): Form
     {

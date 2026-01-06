@@ -38,13 +38,28 @@ class PendaftaranRelationManager extends RelationManager
                         return $record->kelas?->nama_kelas ?? 'N/A';
                     }),
 
-                Tables\Columns\BadgeColumn::make('status')
-                    ->colors([
-                        'success' => 'selesai',
-                        'danger' => 'dibatalkan',
-                        'warning' => 'aktif',
+                Tables\Columns\SelectColumn::make('status')
+                    ->options([
+                        'aktif' => 'Aktif',
+                        'selesai' => 'Selesai',
                     ])
-                    ->default('aktif'),
+                    ->afterStateUpdated(function ($record, $state) {
+                        if ($state === 'selesai' && !$record->finished_at) {
+                            $record->update([
+                                'finished_at' => now(),
+                            ]);
+                        } elseif ($state === 'aktif' && $record->finished_at) {
+                            $record->update([
+                                'finished_at' => null,
+                            ]);
+                        }
+
+                        Notification::make()
+                            ->title('Berhasil')
+                            ->body('Status berhasil diperbarui.')
+                            ->success()
+                            ->send();
+                    }),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Daftar')
@@ -57,33 +72,7 @@ class PendaftaranRelationManager extends RelationManager
 
             ])
             ->headerActions([])
-            ->actions([
-                Tables\Actions\Action::make('selesai')
-                    ->label('Selesai')
-                    ->icon('heroicon-o-check-circle')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->modalHeading('Tandai Selesai')
-                    ->modalDescription('Apakah Anda yakin ingin menandai kelas ini sebagai selesai?')
-                    ->modalSubmitActionLabel('Ya, Selesai')
-                    ->action(function ($record) {
-                        $record->update([
-                            'finished_at' => now(),
-                            'status' => 'selesai',
-                        ]);
-
-                        Notification::make()
-                            ->title('Berhasil')
-                            ->body('Kelas telah ditandai sebagai selesai.')
-                            ->success()
-                            ->send();
-                    })
-                    ->disabled(fn($record) => $record->finished_at !== null)
-                    ->hidden(fn($record) => $record->status === 'selesai'),
-            ])
-            ->bulkActions([])
-            ->actionsColumnLabel('Aksi')
-            ->actionsAlignment('left')
-            ->actionsPosition(Tables\Enums\ActionsPosition::BeforeColumns);
+            ->actions([])
+            ->bulkActions([]);
     }
 }
