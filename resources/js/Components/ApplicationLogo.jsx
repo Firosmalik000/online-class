@@ -5,7 +5,7 @@ export default function ApplicationLogo(props) {
 
     return (
         <img
-            src="/image/logo-online-class.jpg"
+            src="/Image/logo-online-class.jpg"
             alt="Logo"
             className="h-10 w-auto"
             {...props}
