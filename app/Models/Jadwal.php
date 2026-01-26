@@ -19,7 +19,7 @@ class Jadwal extends Model
         return $this->belongsTo(Kelas::class, 'id_kelas', 'id_kelas');
     }
 
-    public function materi()
+    public function materis()
     {
         return $this->hasMany(Materi::class, 'id_jadwal', 'id');
     }

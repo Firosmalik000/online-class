@@ -60,6 +60,7 @@ class PenggunaResource extends Resource
                         'pegawai' => 'Pegawai',
                         'admin' => 'Admin',
                         'peserta' => 'Peserta',
+                        'pengajar' => 'Pengajar',
                     ])
                     ->default('pegawai')
                     ->required(),
@@ -89,7 +90,8 @@ class PenggunaResource extends Resource
                     ->color(fn (string $state): string => match ($state) {
                         'pegawai' => 'warning',
                         'admin' => 'success',
-                        'peserta' => 'primary'
+                        'peserta' => 'primary',
+                        'pengajar' => 'info',
                     })
                     ->formatStateUsing(fn (string $state): string => ucfirst($state))
                     ->sortable(),

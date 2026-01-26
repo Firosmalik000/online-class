@@ -8,6 +8,8 @@ use App\Http\Controllers\KursusKontroller;
 use App\Http\Controllers\DetailController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\PresensiController;
+use App\Http\Controllers\PengajarDashboardController;
+use App\Http\Controllers\MateriController;
 
 // use Inertia\Inertia;
 
@@ -29,6 +31,23 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::post('/absence', [PresensiController::class, 'store'])->name('presensi.store');
+
+    // Download materi (untuk siswa)
+    Route::get('/materi/{id}/download', [MateriController::class, 'download'])->name('materi.download');
+});
+
+// Pengajar Routes
+Route::middleware(['auth'])->prefix('pengajar')->name('pengajar.')->group(function () {
+    Route::get('/dashboard', [PengajarDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/kelas', [PengajarDashboardController::class, 'kelas'])->name('kelas');
+    Route::get('/kelas/{id}', [PengajarDashboardController::class, 'detailKelas'])->name('kelas.detail');
+    Route::get('/jadwal', [PengajarDashboardController::class, 'jadwal'])->name('jadwal');
+    Route::get('/materi', [PengajarDashboardController::class, 'materi'])->name('materi');
+
+    // Materi upload/delete/view
+    Route::post('/materi', [MateriController::class, 'store'])->name('materi.store');
+    Route::get('/materi/{id}/view', [MateriController::class, 'view'])->name('materi.view');
+    Route::delete('/materi/{id}', [MateriController::class, 'destroy'])->name('materi.destroy');
 });
 
 // Route::middleware('admin')->group(function () {

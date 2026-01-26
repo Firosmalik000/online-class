@@ -8,11 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Materi extends Model
 {
     protected $table = 'materi';
-    protected $fillable = ['id_jadwal', 'materi'];
-
-    protected $casts = [
-        'materi' => 'array',
-    ];
+    protected $fillable = ['id_jadwal', 'judul', 'filename', 'filepath'];
 
     public function jadwal()
     {
