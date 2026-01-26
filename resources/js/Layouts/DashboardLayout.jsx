@@ -43,6 +43,11 @@ export default function DashboardLayout({ children }) {
                         <NavLink href={route("order.index")}>
                             Order Detail
                         </NavLink>
+                        {user.role === 'pengajar' && (
+                            <NavLink href={route("pengajar.dashboard")}>
+                                Dashboard Pengajar
+                            </NavLink>
+                        )}
                         <NavLink href="/profile">Setting</NavLink>
                     </nav>
                 </div>

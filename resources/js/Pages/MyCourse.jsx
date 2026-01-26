@@ -1,12 +1,14 @@
 import ModalJadwal from "@/Components/ModalJadwal";
+import ModalMateri from "@/Components/ModalMateri";
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import { router, useForm } from "@inertiajs/react";
 import React, { useState } from "react";
-import { FaCalendarAlt, FaCheckCircle } from "react-icons/fa";
+import { FaCalendarAlt, FaCheckCircle, FaFileAlt } from "react-icons/fa";
 import Swal from "sweetalert2";
 
 const MyCourse = ({ kursus }) => {
     const [showModalJadwal, setShowModalJadwal] = useState(false);
+    const [showModalMateri, setShowModalMateri] = useState(false);
     const [selectedKelas, setSelectedKelas] = useState(null);
     const [modalMode, setModalMode] = useState("edit");
 
@@ -80,6 +82,11 @@ const MyCourse = ({ kursus }) => {
         setShowModalJadwal(true);
     };
 
+    const openMateriModal = (item) => {
+        setSelectedKelas(item);
+        setShowModalMateri(true);
+    };
+
     const absensiKelas = async (jadwalsArray, payload) => {
         const listIdJadwal = jadwalsArray.map(j => j.id);
 
@@ -136,6 +143,7 @@ const MyCourse = ({ kursus }) => {
                             <th className="py-3 px-5 text-left">Kategori</th>
                             <th className="py-3 px-5 text-left">Sesi</th>
                             <th className="py-3 px-5 text-center">Jadwal</th>
+                            <th className="py-3 px-5 text-center">Materi</th>
                             <th className="py-3 px-5 text-left">Link</th>
                         </tr>
                     </thead>
@@ -143,7 +151,7 @@ const MyCourse = ({ kursus }) => {
                         {kursus.length === 0 ? (
                             <tr>
                                 <td
-                                    colSpan="7"
+                                    colSpan="8"
                                     className="text-center py-6 text-gray-500"
                                 >
                                     Belum ada kursus yang diikuti.
@@ -196,6 +204,18 @@ const MyCourse = ({ kursus }) => {
                                             </div>
                                         </td>
                                         <td className="py-3 px-5">
+                                            <div className="flex justify-center">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => openMateriModal(item)}
+                                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs leading-4 font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200"
+                                                >
+                                                    <FaFileAlt className="mr-1.5 h-3 w-3" />
+                                                    Materi
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td className="py-3 px-5">
                                             {item.pendaftaran?.kelas?.link_zoom ? (
                                                 <a
                                                     href={item.pendaftaran.kelas.link_zoom}
@@ -235,6 +255,13 @@ const MyCourse = ({ kursus }) => {
                 onSelect={(jadwals) => {
                     absensiKelas(jadwals, selectedKelas);
                 }}
+            />
+
+            <ModalMateri
+                show={showModalMateri}
+                data={selectedKelas?.pendaftaran?.kelas?.jadwal || []}
+                kelas={selectedKelas?.pendaftaran?.kelas}
+                onClose={() => setShowModalMateri(false)}
             />
         </DashboardLayout>
     );

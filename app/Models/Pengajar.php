@@ -10,5 +10,15 @@ class Pengajar extends Model
 
     protected $primaryKey = 'id_pengajar';
 
-    protected $fillable = ['id_pengajar', 'nama', 'keahlian', 'foto'];
+    protected $fillable = ['id_pengajar', 'user_id', 'nama', 'keahlian', 'foto'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id_pengguna');
+    }
+
+    public function kelas()
+    {
+        return $this->hasMany(Kelas::class, 'id_pengajar', 'id_pengajar');
+    }
 }
