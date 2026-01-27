@@ -51,12 +51,20 @@ class KelasResource extends Resource
                         Forms\Components\Repeater::make('materi')
                             ->label('Materi')
                             ->schema([
-                                Forms\Components\RichEditor::make('materi')
-                                    ->label('Materi')
+                                Forms\Components\TextInput::make('judul')
+                                    ->label('Judul Materi')
+                                    ->required(),
+                                Forms\Components\FileUpload::make('file')
+                                    ->label('File Materi')
+                                    ->disk('public')
+                                    ->directory('materi')
+                                    ->acceptedFileTypes(['application/pdf', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'video/*'])
+                                    ->maxSize(50000)
+                                    ->storeFileNamesIn('original_filename')
                                     ->required()
                                     ->columnSpanFull(),
+                                Forms\Components\Hidden::make('original_filename'),
                                 Forms\Components\Hidden::make('id'),
-
                             ])
                             ->minItems(1)
                             ->columns(1)
@@ -77,7 +85,7 @@ class KelasResource extends Resource
                             return new Intl.NumberFormat('id-ID').format(number);
                         }
                     JS))
-                    ->stripCharacters(['.', ',']) // optional
+                    ->stripCharacters(['.', ','])
                     ->dehydrateStateUsing(fn($state) => (int) str_replace(['.', ','], '', $state))
                     ->numeric()
                     ->required(),
@@ -111,7 +119,7 @@ class KelasResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('banner')->visibility('public')->default('https://placehold.co/600x400?text=User+Name'),
                 Tables\Columns\TextColumn::make('nama_kelas'),
-                Tables\Columns\TextColumn::make('pengajar_id')->getStateUsing(fn(Kelas $record): string => $record->pengajar->nama),
+                Tables\Columns\TextColumn::make('pengajar.nama')->label('Pengajar'),
                 Tables\Columns\TextColumn::make('harga')->money('IDR'),
             ])
             ->filters([

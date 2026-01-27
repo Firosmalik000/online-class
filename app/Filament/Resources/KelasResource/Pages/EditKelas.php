@@ -6,6 +6,7 @@ use App\Filament\Resources\KelasResource;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Storage;
 
 class EditKelas extends EditRecord
 {
@@ -34,7 +35,7 @@ class EditKelas extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $jadwal = $this->record->jadwal()
-            ->with('materi')
+            ->with('materis')
             ->get();
 
         if ($jadwal->isEmpty()) {
@@ -44,32 +45,16 @@ class EditKelas extends EditRecord
 
         $data['jadwal'] = $jadwal->map(function ($j) {
             return [
-                'id'      => $j->id, // ← ID jadwal
+                'id'      => $j->id_jadwal,
                 'tanggal' => $j->tanggal,
                 'waktu'   => $j->waktu,
 
-                'materi' => $j->materi->map(function ($m) {
-
-                    $value = $m->materi;
-
-                    if ($value === null) {
-                        return [
-                            'id'     => $m->id, // ← ID materi
-                            'materi' => '',
-                        ];
-                    }
-
-                    if (is_string($value)) {
-                        $decoded = json_decode($value, true);
-
-                        if (json_last_error() === JSON_ERROR_NONE) {
-                            $value = $decoded;
-                        }
-                    }
-
+                'materi' => $j->materis->map(function ($m) {
                     return [
-                        'id'     => $m->id, // ← ID materi
-                        'materi' => is_array($value) ? ($value['content'] ?? '') : $value,
+                        'id'                => $m->id_materi,
+                        'judul'             => $m->judul,
+                        'file'              => $m->filepath,
+                        'original_filename' => $m->filename,
                     ];
                 })->toArray(),
             ];
@@ -78,60 +63,105 @@ class EditKelas extends EditRecord
         return $data;
     }
 
-
     protected function afterSave(): void
     {
         $kelas = $this->record;
-
         $jadwalIdsToKeep = [];
 
-        foreach ($this->data['jadwal'] as $jadwalData) {
+        foreach ($this->data['jadwal'] ?? [] as $jadwalData) {
 
-            // UPDATE atau CREATE
-            $jadwal = isset($jadwalData['id'])
+            // UPDATE atau CREATE jadwal
+            $jadwal = isset($jadwalData['id']) && $jadwalData['id']
                 ? $kelas->jadwal()->find($jadwalData['id'])
-                : $kelas->jadwal()->create([
+                : null;
+
+            if ($jadwal) {
+                $jadwal->update([
                     'tanggal' => $jadwalData['tanggal'],
                     'waktu' => $jadwalData['waktu'],
                 ]);
-
-            if (isset($jadwalData['id'])) {
-                $jadwal->update([
+            } else {
+                $jadwal = $kelas->jadwal()->create([
                     'tanggal' => $jadwalData['tanggal'],
                     'waktu' => $jadwalData['waktu'],
                 ]);
             }
 
-            $jadwalIdsToKeep[] = $jadwal->id;
+            $jadwalIdsToKeep[] = $jadwal->id_jadwal;
 
             // ======== MATERI UPDATE ========
             $materiIdsToKeep = [];
 
             foreach ($jadwalData['materi'] ?? [] as $materiData) {
-
-                $materi = isset($materiData['id'])
+                $materi = isset($materiData['id']) && $materiData['id']
                     ? $jadwal->materi()->find($materiData['id'])
-                    : $jadwal->materi()->create([
-                        'materi' => [
-                            'content' => $materiData['materi'],
-                        ],
-                    ]);
+                    : null;
 
-                if (isset($materiData['id'])) {
-                    $value = [
-                        'content' => $materiData['materi'],
-                    ];
-                    $materi->update(['materi' => $value]);
+                $filepath = $materiData['file'] ?? null;
+                
+                // Convert array to string if needed
+                if (is_array($filepath)) {
+                    $filepath = $filepath[0] ?? null;
+                }
+                
+                if (empty($filepath)) {
+                    continue;
+                }
+                
+                // Ambil original filename
+                $originalFilename = $materiData['original_filename'] ?? null;
+                if (is_array($originalFilename)) {
+                    $originalFilename = $originalFilename[0] ?? basename($filepath);
+                }
+                if (empty($originalFilename)) {
+                    $originalFilename = $materi ? $materi->filename : basename($filepath);
                 }
 
-                $materiIdsToKeep[] = $materi->id;
+                if ($materi) {
+                    // Hapus file lama jika filepath berubah
+                    if ($materi->filepath !== $filepath) {
+                        if ($materi->filepath && Storage::disk('public')->exists($materi->filepath)) {
+                            Storage::disk('public')->delete($materi->filepath);
+                        }
+                    }
+                    
+                    // UPDATE
+                    $materi->update([
+                        'judul' => $materiData['judul'],
+                        'filename' => $originalFilename,
+                        'filepath' => $filepath,
+                    ]);
+                } else {
+                    // CREATE
+                    $materi = $jadwal->materi()->create([
+                        'judul' => $materiData['judul'],
+                        'filename' => $originalFilename,
+                        'filepath' => $filepath,
+                    ]);
+                }
+
+                $materiIdsToKeep[] = $materi->id_materi;
             }
 
-            // delete materi yang dihapus user
-            $jadwal->materi()->whereNotIn('id', $materiIdsToKeep)->delete();
+            // delete materi yang dihapus user (dan hapus filenya juga)
+            $deletedMateri = $jadwal->materi()->whereNotIn('id_materi', $materiIdsToKeep)->get();
+            foreach ($deletedMateri as $m) {
+                if ($m->filepath && Storage::disk('public')->exists($m->filepath)) {
+                    Storage::disk('public')->delete($m->filepath);
+                }
+                $m->delete();
+            }
         }
 
-        // delete jadwal yang dihapus user
-        $kelas->jadwal()->whereNotIn('id', $jadwalIdsToKeep)->delete();
+        // delete jadwal yang dihapus user (dan materi + filenya)
+        $deletedJadwal = $kelas->jadwal()->whereNotIn('id_jadwal', $jadwalIdsToKeep)->get();
+        foreach ($deletedJadwal as $j) {
+            foreach ($j->materi as $m) {
+                if ($m->filepath && Storage::disk('public')->exists($m->filepath)) {
+                    Storage::disk('public')->delete($m->filepath);
+                }
+            }
+            $j->delete();
+        }
     }
 }
